@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.com.orbitank.service.SupplyRequestService;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ import java.util.List;
 public class SupplyRequestController {
 
     private final SupplyRequestRepository repository;
+
+    private final SupplyRequestService service;
 
     @GetMapping
     public List<SupplyRequest> findAll() {
@@ -96,5 +99,15 @@ public class SupplyRequestController {
         repository.deleteById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/analyze")
+    public ResponseEntity<SupplyRequest> analyzeRequest(
+            @PathVariable Long id
+    ) {
+
+        return ResponseEntity.ok(
+                service.analyzeRequest(id)
+        );
     }
 }
