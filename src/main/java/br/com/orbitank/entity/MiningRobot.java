@@ -3,16 +3,15 @@ package br.com.orbitank.entity;
 import br.com.orbitank.enums.RobotStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "tb_mining_robot")
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Entity
+@Table(name = "tb_mining_robot")
 
 public class MiningRobot {
 

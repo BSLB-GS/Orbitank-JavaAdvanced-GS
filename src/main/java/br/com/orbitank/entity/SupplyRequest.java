@@ -3,18 +3,17 @@ package br.com.orbitank.entity;
 import br.com.orbitank.enums.SupplyRequestStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "tb_supply_request")
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Entity
+@Table(name = "tb_supply_request")
 
 public class SupplyRequest {
 
