@@ -21,5 +21,4 @@ public class SensorDTO {
 
     private String status;
 
-    private Long lunarStationId;
 }
