@@ -1,6 +1,7 @@
 package br.com.orbitank.entity;
 
 import br.com.orbitank.enums.RefuelOrderStatus;
+import br.com.orbitank.enums.TankStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -56,4 +57,9 @@ public class RefuelOrder {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RefuelOrderStatus status;
+
+    @NotNull(message = "O status do tanque é obrigatório")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TankStatus tankStatus;
 }
