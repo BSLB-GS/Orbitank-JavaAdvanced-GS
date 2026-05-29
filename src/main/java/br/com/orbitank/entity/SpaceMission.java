@@ -1,5 +1,6 @@
 package br.com.orbitank.entity;
 
+import br.com.orbitank.enums.MissionPriority;
 import br.com.orbitank.enums.MissionStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
@@ -35,6 +36,19 @@ public class SpaceMission {
     @Column(nullable = false, unique = true)
     private String missionCode;
 
+    @NotBlank(message = "O nome da missão é obrigatório")
+    @Size(max = 120, message = "O nome da missão deve ter no máximo 120 caracteres")
+    @Column(nullable = false, length = 120)
+    private String missionName;
+
+    @NotBlank(message = "O nome da empresa é obrigatório")
+    @Size(max = 120, message = "O nome da empresa deve ter no máximo 120 caracteres")
+    private String clientCompanyName;
+
+    @NotBlank(message = "O código comercial é obrigatório")
+    @Size(max = 80, message = "O código comercial externo deve ter no máximo 80 caracteres")
+    private String externalCommercialRequestCode;
+
     @NotBlank(message = "O destino é obrigatório")
     @Size(max = 100, message = "O destino deve ter no máximo 100 caracteres")
     @Column(nullable = false, length = 100)
@@ -45,8 +59,15 @@ public class SpaceMission {
     @Column(nullable = false)
     private LocalDateTime scheduledLaunchDate;
 
-    @NotNull(message = "O status da missão é obrigatório")
+    @ManyToOne
+    @JoinColumn(name = "created_by_user_id", nullable = false)
+    private OperationalUser createdBy;
+
+    @NotNull(message = "A prioridade da missão é obrigatória")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MissionStatus status;
+    private MissionPriority priority;
+
+
+
 }
