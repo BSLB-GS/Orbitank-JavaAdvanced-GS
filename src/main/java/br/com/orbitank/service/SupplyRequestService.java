@@ -1,13 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.entity.OperationalAlert;
-import br.com.orbitank.entity.ResourceTank;
+import br.com.orbitank.dto.SupplyRequestDTO;
 import br.com.orbitank.entity.SupplyRequest;
-import br.com.orbitank.enums.AlertSeverity;
-import br.com.orbitank.enums.ResourceType;
-import br.com.orbitank.enums.SupplyRequestStatus;
-import br.com.orbitank.repository.OperationalAlertRepository;
-import br.com.orbitank.repository.ResourceTankRepository;
 import br.com.orbitank.repository.SupplyRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,96 +10,98 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class SupplyRequestService {
 
-    private final SupplyRequestRepository supplyRequestRepository;
+    private final SupplyRequestRepository repository;
 
-    private final ResourceTankRepository resourceTankRepository;
+    public List<SupplyRequestDTO> findAll() {
 
-    private final OperationalAlertRepository operationalAlertRepository;
-
-    public SupplyRequest analyzeRequest(Long requestId) {
-
-        SupplyRequest request = supplyRequestRepository
-                .findById(requestId)
-                .orElseThrow();
-
-        boolean hasCriticalAlert =
-                operationalAlertRepository
-                        .findAll()
-                        .stream()
-                        .anyMatch(alert ->
-                                alert.getActive()
-                                        &&
-                                        alert.getSeverity()
-                                                == AlertSeverity.CRITICAL
-                        );
-
-        if (hasCriticalAlert) {
-
-            request.setStatus(
-                    SupplyRequestStatus.DENIED
-            );
-
-            request.setDenialReason(
-                    "Operação negada devido a alerta crítico ativo"
-            );
-
-            return supplyRequestRepository.save(request);
-        }
-
-        double availableWater =
-                getAvailableVolume(ResourceType.LIQUID_WATER);
-
-        double availableH2 =
-                getAvailableVolume(ResourceType.HYDROGEN);
-
-        double availableO2 =
-                getAvailableVolume(ResourceType.OXYGEN);
-
-        boolean enoughResources =
-                availableWater >= request.getRequestedWaterVolume()
-                        &&
-                        availableH2 >= request.getRequestedH2Volume()
-                        &&
-                        availableO2 >= request.getRequestedO2Volume();
-
-        if (!enoughResources) {
-
-            request.setStatus(
-                    SupplyRequestStatus.WAITING_FOR_RESOURCES
-            );
-
-            request.setDenialReason(
-                    "Recursos insuficientes"
-            );
-
-            return supplyRequestRepository.save(request);
-        }
-
-        request.setStatus(
-                SupplyRequestStatus.APPROVED
-        );
-
-        request.setDenialReason(null);
-
-        return supplyRequestRepository.save(request);
+        return repository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    private double getAvailableVolume(
-            ResourceType resourceType
-    ) {
+    public SupplyRequestDTO findById(Long id) {
 
-        List<ResourceTank> tanks =
-                resourceTankRepository.findAll();
+        SupplyRequest entity = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Solicitação não encontrada"));
 
-        return tanks.stream()
-                .filter(tank ->
-                        tank.getResourceType()
-                                == resourceType
+        return toDTO(entity);
+    }
+
+    public SupplyRequestDTO create(SupplyRequestDTO dto) {
+
+        return toDTO(repository.save(toEntity(dto)));
+    }
+
+    public SupplyRequestDTO update(Long id, SupplyRequestDTO dto) {
+
+        SupplyRequest entity = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Solicitação não encontrada"));
+
+        entity.setRequestedWaterVolume(
+                dto.getRequestedWaterVolume()
+        );
+
+        entity.setRequestedH2Volume(
+                dto.getRequestedH2Volume()
+        );
+
+        entity.setRequestedO2Volume(
+                dto.getRequestedO2Volume()
+        );
+
+        entity.setDenialReason(
+                dto.getDenialReason()
+        );
+
+        return toDTO(repository.save(entity));
+    }
+
+    public void delete(Long id) {
+
+        repository.deleteById(id);
+    }
+
+    private SupplyRequestDTO toDTO(SupplyRequest entity) {
+
+        return SupplyRequestDTO.builder()
+                .id(entity.getId())
+                .requestedWaterVolume(
+                        entity.getRequestedWaterVolume()
                 )
-                .mapToDouble(ResourceTank::getCurrentVolume)
-                .sum();
+                .requestedH2Volume(
+                        entity.getRequestedH2Volume()
+                )
+                .requestedO2Volume(
+                        entity.getRequestedO2Volume()
+                )
+                .denialReason(
+                        entity.getDenialReason()
+                )
+                .status(entity.getStatus().name())
+                .build();
+    }
+
+    private SupplyRequest toEntity(SupplyRequestDTO dto) {
+
+        return SupplyRequest.builder()
+                .id(dto.getId())
+                .requestedWaterVolume(
+                        dto.getRequestedWaterVolume()
+                )
+                .requestedH2Volume(
+                        dto.getRequestedH2Volume()
+                )
+                .requestedO2Volume(
+                        dto.getRequestedO2Volume()
+                )
+                .denialReason(
+                        dto.getDenialReason()
+                )
+                .build();
     }
 }
