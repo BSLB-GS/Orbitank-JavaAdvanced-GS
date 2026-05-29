@@ -4,9 +4,12 @@ import br.com.orbitank.dto.SupplyRequestDTO;
 import br.com.orbitank.entity.SupplyRequest;
 import br.com.orbitank.repository.SupplyRequestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,93 +18,66 @@ public class SupplyRequestService {
     private final SupplyRequestRepository repository;
 
     public List<SupplyRequestDTO> findAll() {
-
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
-                .toList();
+                .map(request -> {
+                    SupplyRequestDTO dto = new SupplyRequestDTO();
+                    dto.setId(request.getId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     public SupplyRequestDTO findById(Long id) {
+        SupplyRequest request = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Solicitação não encontrada com o ID: " + id));
 
-        SupplyRequest entity = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Solicitação não encontrada"));
-
-        return toDTO(entity);
+        SupplyRequestDTO dto = new SupplyRequestDTO();
+        dto.setId(request.getId());
+        return dto;
     }
 
     public SupplyRequestDTO create(SupplyRequestDTO dto) {
+        SupplyRequest request = new SupplyRequest();
 
-        return toDTO(repository.save(toEntity(dto)));
+        SupplyRequest savedRequest = repository.save(request);
+
+        SupplyRequestDTO resultDto = new SupplyRequestDTO();
+        resultDto.setId(savedRequest.getId());
+        return resultDto;
     }
 
     public SupplyRequestDTO update(Long id, SupplyRequestDTO dto) {
+        SupplyRequest request = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Solicitação não encontrada com o ID: " + id));
 
-        SupplyRequest entity = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Solicitação não encontrada"));
+        SupplyRequest updatedRequest = repository.save(request);
 
-        entity.setRequestedWaterVolume(
-                dto.getRequestedWaterVolume()
-        );
-
-        entity.setRequestedH2Volume(
-                dto.getRequestedH2Volume()
-        );
-
-        entity.setRequestedO2Volume(
-                dto.getRequestedO2Volume()
-        );
-
-        entity.setDenialReason(
-                dto.getDenialReason()
-        );
-
-        return toDTO(repository.save(entity));
+        SupplyRequestDTO resultDto = new SupplyRequestDTO();
+        resultDto.setId(updatedRequest.getId());
+        return resultDto;
     }
 
     public void delete(Long id) {
-
-        repository.deleteById(id);
+        SupplyRequest request = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Solicitação não encontrada com o ID: " + id));
+        repository.delete(request);
     }
 
-    private SupplyRequestDTO toDTO(SupplyRequest entity) {
+    public SupplyRequestDTO analyzeRequest(Long id) {
+        SupplyRequest request = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Solicitação não encontrada para análise com o ID: " + id));
 
-        return SupplyRequestDTO.builder()
-                .id(entity.getId())
-                .requestedWaterVolume(
-                        entity.getRequestedWaterVolume()
-                )
-                .requestedH2Volume(
-                        entity.getRequestedH2Volume()
-                )
-                .requestedO2Volume(
-                        entity.getRequestedO2Volume()
-                )
-                .denialReason(
-                        entity.getDenialReason()
-                )
-                .status(entity.getStatus().name())
-                .build();
-    }
+        SupplyRequest requestSalvo = repository.save(request);
 
-    private SupplyRequest toEntity(SupplyRequestDTO dto) {
 
-        return SupplyRequest.builder()
-                .id(dto.getId())
-                .requestedWaterVolume(
-                        dto.getRequestedWaterVolume()
-                )
-                .requestedH2Volume(
-                        dto.getRequestedH2Volume()
-                )
-                .requestedO2Volume(
-                        dto.getRequestedO2Volume()
-                )
-                .denialReason(
-                        dto.getDenialReason()
-                )
-                .build();
+        SupplyRequestDTO resultadoDto = new SupplyRequestDTO();
+        resultadoDto.setId(requestSalvo.getId());
+
+        return resultadoDto;
     }
 }
