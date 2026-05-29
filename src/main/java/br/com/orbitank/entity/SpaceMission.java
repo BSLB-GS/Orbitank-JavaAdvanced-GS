@@ -63,6 +63,12 @@ public class SpaceMission {
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private OperationalUser createdBy;
 
+    @NotNull(message = "O status da missão é obrigatória")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MissionStatus status;
+
+
     @NotNull(message = "A prioridade da missão é obrigatória")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
