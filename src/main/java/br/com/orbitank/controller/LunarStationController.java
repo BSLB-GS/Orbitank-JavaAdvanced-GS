@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.LunarStation;
-import br.com.orbitank.repository.LunarStationRepository;
+import br.com.orbitank.dto.LunarStationDTO;
+import br.com.orbitank.service.LunarStationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,60 +12,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/stations")
 @RequiredArgsConstructor
-
 public class LunarStationController {
 
-    private final LunarStationRepository repository;
+    private final LunarStationService service;
 
     @GetMapping
-    public List<LunarStation> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<LunarStationDTO>> findAll() {
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LunarStation> findById(@PathVariable Long id) {
+    public ResponseEntity<LunarStationDTO> findById(
+            @PathVariable Long id
+    ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public LunarStation create(
-            @RequestBody @Valid LunarStation lunarStation
+    public ResponseEntity<LunarStationDTO> create(
+            @RequestBody @Valid LunarStationDTO dto
     ) {
 
-        return repository.save(lunarStation);
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LunarStation> update(
+    public ResponseEntity<LunarStationDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid LunarStation lunarStation
+            @RequestBody @Valid LunarStationDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setName(lunarStation.getName());
-                    existing.setLocation(lunarStation.getLocation());
-                    existing.setStatus(lunarStation.getStatus());
-
-                    return ResponseEntity.ok(repository.save(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+    ) {
 
-        return repository.findById(id)
-                .map(station -> {
+        service.delete(id);
 
-                    repository.delete(station);
-
-                    return ResponseEntity.noContent().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.noContent().build();
     }
 }

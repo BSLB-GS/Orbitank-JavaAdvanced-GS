@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.ResourceTank;
-import br.com.orbitank.repository.ResourceTankRepository;
+import br.com.orbitank.dto.ResourceTankDTO;
+import br.com.orbitank.service.ResourceTankService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,76 +12,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/resource-tanks")
 @RequiredArgsConstructor
-
 public class ResourceTankController {
 
-    private final ResourceTankRepository repository;
+    private final ResourceTankService service;
 
     @GetMapping
-    public List<ResourceTank> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<ResourceTankDTO>> findAll() {
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceTank> findById(@PathVariable Long id) {
+    public ResponseEntity<ResourceTankDTO> findById(
+            @PathVariable Long id
+    ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResourceTank create(
-            @RequestBody @Valid ResourceTank resourceTank
+    public ResponseEntity<ResourceTankDTO> create(
+            @RequestBody @Valid ResourceTankDTO dto
     ) {
 
-        return repository.save(resourceTank);
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResourceTank> update(
+    public ResponseEntity<ResourceTankDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid ResourceTank resourceTank
+            @RequestBody @Valid ResourceTankDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setMaxCapacity(
-                            resourceTank.getMaxCapacity()
-                    );
-
-                    existing.setCurrentVolume(
-                            resourceTank.getCurrentVolume()
-                    );
-
-                    existing.setCurrentPressure(
-                            resourceTank.getCurrentPressure()
-                    );
-
-                    existing.setCurrentTemperature(
-                            resourceTank.getCurrentTemperature()
-                    );
-
-                    existing.setResourceType(
-                            resourceTank.getResourceType()
-                    );
-
-                    return ResponseEntity.ok(
-                            repository.save(existing)
-                    );
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+    ) {
 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
     }

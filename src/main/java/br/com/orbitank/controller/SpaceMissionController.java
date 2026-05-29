@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.SpaceMission;
-import br.com.orbitank.repository.SpaceMissionRepository;
+import br.com.orbitank.dto.SpaceMissionDTO;
+import br.com.orbitank.service.SpaceMissionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,63 +12,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/missions")
 @RequiredArgsConstructor
-
 public class SpaceMissionController {
 
-    private final SpaceMissionRepository repository;
+    private final SpaceMissionService service;
 
     @GetMapping
-    public List<SpaceMission> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<SpaceMissionDTO>> findAll() {
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SpaceMission> findById(@PathVariable Long id) {
+    public ResponseEntity<SpaceMissionDTO> findById(
+            @PathVariable Long id
+    ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public SpaceMission create(
-            @RequestBody @Valid SpaceMission mission
+    public ResponseEntity<SpaceMissionDTO> create(
+            @RequestBody @Valid SpaceMissionDTO dto
     ) {
 
-        return repository.save(mission);
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SpaceMission> update(
+    public ResponseEntity<SpaceMissionDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid SpaceMission mission
+            @RequestBody @Valid SpaceMissionDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setMissionCode(mission.getMissionCode());
-                    existing.setDestination(mission.getDestination());
-                    existing.setScheduledLaunchDate(
-                            mission.getScheduledLaunchDate()
-                    );
-                    existing.setStatus(mission.getStatus());
-
-                    return ResponseEntity.ok(repository.save(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+    ) {
 
-        return repository.findById(id)
-                .map(mission -> {
+        service.delete(id);
 
-                    repository.delete(mission);
-
-                    return ResponseEntity.noContent().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.noContent().build();
     }
 }

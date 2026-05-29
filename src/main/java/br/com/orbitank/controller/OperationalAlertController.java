@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.OperationalAlert;
-import br.com.orbitank.repository.OperationalAlertRepository;
+import br.com.orbitank.dto.OperationalAlertDTO;
+import br.com.orbitank.service.OperationalAlertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,72 +12,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/operational-alerts")
 @RequiredArgsConstructor
-
 public class OperationalAlertController {
 
-    private final OperationalAlertRepository repository;
+    private final OperationalAlertService service;
 
     @GetMapping
-    public List<OperationalAlert> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<OperationalAlertDTO>> findAll() {
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OperationalAlert> findById(
+    public ResponseEntity<OperationalAlertDTO> findById(
             @PathVariable Long id
     ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public OperationalAlert create(
-            @RequestBody @Valid OperationalAlert operationalAlert
+    public ResponseEntity<OperationalAlertDTO> create(
+            @RequestBody @Valid OperationalAlertDTO dto
     ) {
 
-        return repository.save(operationalAlert);
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OperationalAlert> update(
+    public ResponseEntity<OperationalAlertDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid OperationalAlert operationalAlert
+            @RequestBody @Valid OperationalAlertDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setSource(
-                            operationalAlert.getSource()
-                    );
-
-                    existing.setMessage(
-                            operationalAlert.getMessage()
-                    );
-
-                    existing.setActive(
-                            operationalAlert.getActive()
-                    );
-
-                    existing.setTriggeredAt(
-                            operationalAlert.getTriggeredAt()
-                    );
-
-                    existing.setResolvedAt(
-                            operationalAlert.getResolvedAt()
-                    );
-
-                    existing.setSeverity(
-                            operationalAlert.getSeverity()
-                    );
-
-                    return ResponseEntity.ok(
-                            repository.save(existing)
-                    );
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -85,11 +52,7 @@ public class OperationalAlertController {
             @PathVariable Long id
     ) {
 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
     }

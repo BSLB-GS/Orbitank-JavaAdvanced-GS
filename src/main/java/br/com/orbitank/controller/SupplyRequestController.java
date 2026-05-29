@@ -1,90 +1,58 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.SupplyRequest;
-import br.com.orbitank.repository.SupplyRequestRepository;
+import br.com.orbitank.dto.SupplyRequestDTO;
+import br.com.orbitank.service.SupplyRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import br.com.orbitank.service.SupplyRequestService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/supply-requests")
 @RequiredArgsConstructor
-
 public class SupplyRequestController {
-
-    private final SupplyRequestRepository repository;
 
     private final SupplyRequestService service;
 
     @GetMapping
-    public List<SupplyRequest> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<SupplyRequestDTO>> findAll() {
+
+        return ResponseEntity.ok(
+                service.findAll()
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SupplyRequest> findById(
+    public ResponseEntity<SupplyRequestDTO> findById(
             @PathVariable Long id
     ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+                service.findById(id)
+        );
     }
 
     @PostMapping
-    public SupplyRequest create(
-            @RequestBody @Valid SupplyRequest supplyRequest
+    public ResponseEntity<SupplyRequestDTO> create(
+            @RequestBody @Valid SupplyRequestDTO dto
     ) {
 
-        return repository.save(supplyRequest);
+        return ResponseEntity.ok(
+                service.create(dto)
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SupplyRequest> update(
+    public ResponseEntity<SupplyRequestDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid SupplyRequest supplyRequest
+            @RequestBody @Valid SupplyRequestDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setMission(
-                            supplyRequest.getMission()
-                    );
-
-                    existing.setRequestedWaterVolume(
-                            supplyRequest.getRequestedWaterVolume()
-                    );
-
-                    existing.setRequestedH2Volume(
-                            supplyRequest.getRequestedH2Volume()
-                    );
-
-                    existing.setRequestedO2Volume(
-                            supplyRequest.getRequestedO2Volume()
-                    );
-
-                    existing.setRequestDate(
-                            supplyRequest.getRequestDate()
-                    );
-
-                    existing.setDenialReason(
-                            supplyRequest.getDenialReason()
-                    );
-
-                    existing.setStatus(
-                            supplyRequest.getStatus()
-                    );
-
-                    return ResponseEntity.ok(
-                            repository.save(existing)
-                    );
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+                service.update(id, dto)
+        );
     }
 
     @DeleteMapping("/{id}")
@@ -92,17 +60,13 @@ public class SupplyRequestController {
             @PathVariable Long id
     ) {
 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/analyze")
-    public ResponseEntity<SupplyRequest> analyzeRequest(
+    public ResponseEntity<SupplyRequestDTO> analyzeRequest(
             @PathVariable Long id
     ) {
 

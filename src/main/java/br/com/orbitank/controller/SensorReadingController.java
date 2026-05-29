@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.SensorReading;
-import br.com.orbitank.repository.SensorReadingRepository;
+import br.com.orbitank.dto.SensorReadingDTO;
+import br.com.orbitank.service.SensorReadingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,60 +12,45 @@ import java.util.List;
 @RestController
 @RequestMapping("/sensor-readings")
 @RequiredArgsConstructor
-
 public class SensorReadingController {
 
-    private final SensorReadingRepository repository;
+    private final SensorReadingService service;
 
     @GetMapping
-    public List<SensorReading> findAll() {
-        return repository.findAll();
+    public List<SensorReadingDTO> findAll() {
+
+        return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SensorReading> findById(
+    public ResponseEntity<SensorReadingDTO> findById(
             @PathVariable Long id
     ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+                service.findById(id)
+        );
     }
 
     @PostMapping
-    public SensorReading create(
-            @RequestBody @Valid SensorReading sensorReading
+    public ResponseEntity<SensorReadingDTO> create(
+            @RequestBody @Valid SensorReadingDTO dto
     ) {
 
-        return repository.save(sensorReading);
+        return ResponseEntity.ok(
+                service.create(dto)
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SensorReading> update(
+    public ResponseEntity<SensorReadingDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid SensorReading sensorReading
+            @RequestBody @Valid SensorReadingDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setSensor(
-                            sensorReading.getSensor()
-                    );
-
-                    existing.setReadingValue(
-                            sensorReading.getReadingValue()
-                    );
-
-                    existing.setTimestamp(
-                            sensorReading.getTimestamp()
-                    );
-
-                    return ResponseEntity.ok(
-                            repository.save(existing)
-                    );
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+                service.update(id, dto)
+        );
     }
 
     @DeleteMapping("/{id}")
@@ -73,11 +58,7 @@ public class SensorReadingController {
             @PathVariable Long id
     ) {
 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
     }

@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.Sensor;
-import br.com.orbitank.repository.SensorRepository;
+import br.com.orbitank.dto.SensorDTO;
+import br.com.orbitank.service.SensorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,64 +12,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/sensors")
 @RequiredArgsConstructor
-
 public class SensorController {
 
-    private final SensorRepository repository;
+    private final SensorService service;
 
     @GetMapping
-    public List<Sensor> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<SensorDTO>> findAll() {
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sensor> findById(
+    public ResponseEntity<SensorDTO> findById(
             @PathVariable Long id
     ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public Sensor create(
-            @RequestBody @Valid Sensor sensor
+    public ResponseEntity<SensorDTO> create(
+            @RequestBody @Valid SensorDTO dto
     ) {
 
-        return repository.save(sensor);
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Sensor> update(
+    public ResponseEntity<SensorDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid Sensor sensor
+            @RequestBody @Valid SensorDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setIdentifier(
-                            sensor.getIdentifier()
-                    );
-
-                    existing.setLocation(
-                            sensor.getLocation()
-                    );
-
-                    existing.setStatus(
-                            sensor.getStatus()
-                    );
-
-                    existing.setSensorType(
-                            sensor.getSensorType()
-                    );
-
-                    return ResponseEntity.ok(
-                            repository.save(existing)
-                    );
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -77,11 +52,7 @@ public class SensorController {
             @PathVariable Long id
     ) {
 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
     }

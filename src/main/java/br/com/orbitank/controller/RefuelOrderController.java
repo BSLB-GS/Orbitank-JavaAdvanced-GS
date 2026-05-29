@@ -1,7 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.entity.RefuelOrder;
-import br.com.orbitank.repository.RefuelOrderRepository;
+import br.com.orbitank.dto.RefuelOrderDTO;
+import br.com.orbitank.service.RefuelOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,76 +12,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/refuel-orders")
 @RequiredArgsConstructor
-
 public class RefuelOrderController {
 
-    private final RefuelOrderRepository repository;
+    private final RefuelOrderService service;
 
     @GetMapping
-    public List<RefuelOrder> findAll() {
-        return repository.findAll();
+    public ResponseEntity<List<RefuelOrderDTO>> findAll() {
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RefuelOrder> findById(
+    public ResponseEntity<RefuelOrderDTO> findById(
             @PathVariable Long id
     ) {
 
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public RefuelOrder create(
-            @RequestBody @Valid RefuelOrder refuelOrder
+    public ResponseEntity<RefuelOrderDTO> create(
+            @RequestBody @Valid RefuelOrderDTO dto
     ) {
 
-        return repository.save(refuelOrder);
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RefuelOrder> update(
+    public ResponseEntity<RefuelOrderDTO> update(
             @PathVariable Long id,
-            @RequestBody @Valid RefuelOrder refuelOrder
+            @RequestBody @Valid RefuelOrderDTO dto
     ) {
 
-        return repository.findById(id)
-                .map(existing -> {
-
-                    existing.setSupplyRequest(
-                            refuelOrder.getSupplyRequest()
-                    );
-
-                    existing.setStartDate(
-                            refuelOrder.getStartDate()
-                    );
-
-                    existing.setEndDate(
-                            refuelOrder.getEndDate()
-                    );
-
-                    existing.setActualWaterTransferred(
-                            refuelOrder.getActualWaterTransferred()
-                    );
-
-                    existing.setActualH2Transferred(
-                            refuelOrder.getActualH2Transferred()
-                    );
-
-                    existing.setActualO2Transferred(
-                            refuelOrder.getActualO2Transferred()
-                    );
-
-                    existing.setStatus(
-                            refuelOrder.getStatus()
-                    );
-
-                    return ResponseEntity.ok(
-                            repository.save(existing)
-                    );
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -89,11 +52,7 @@ public class RefuelOrderController {
             @PathVariable Long id
     ) {
 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        repository.deleteById(id);
+        service.delete(id);
 
         return ResponseEntity.noContent().build();
     }
