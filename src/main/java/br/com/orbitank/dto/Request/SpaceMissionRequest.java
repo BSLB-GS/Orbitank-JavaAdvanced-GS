@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Request;
 
-import br.com.orbitank.entity.OperationalUser;
 import br.com.orbitank.enums.MissionPriority;
 import br.com.orbitank.enums.MissionStatus;
 import jakarta.validation.constraints.Future;
@@ -47,8 +46,8 @@ public class SpaceMissionRequest {
     @Future(message = "A data de lançamento deve estar no futuro")
     private LocalDateTime scheduledLaunchDate;
 
-    @NotNull
-    private OperationalUser createdBy;
+    @NotNull(message = "O ID do usuário criador é obrigatório")
+    private Long createdByUserId;
 
     @NotNull(message = "O status da missão é obrigatória")
     private MissionStatus status;

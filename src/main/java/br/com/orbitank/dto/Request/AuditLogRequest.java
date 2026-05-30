@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Request;
 
-import br.com.orbitank.entity.OperationalUser;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AuditLogRequest {
 
-    @NotNull
-    private OperationalUser user;
+    @NotNull(message = "O ID do usuário é obrigatório")
+    private Long userId;
 
     @NotBlank
     @Size(max = 80)

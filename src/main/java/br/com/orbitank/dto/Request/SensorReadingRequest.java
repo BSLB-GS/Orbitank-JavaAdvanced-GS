@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SensorReadingRequest {
 
-    @NotNull(message = "O sensor é obrigatório")
+    @NotNull(message = "O ID do sensor é obrigatório")
     private Long sensorId;
 
     @NotNull(message = "O valor da leitura é obrigatório")

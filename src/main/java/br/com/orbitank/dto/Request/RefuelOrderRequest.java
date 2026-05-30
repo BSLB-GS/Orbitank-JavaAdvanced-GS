@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Request;
 
-import br.com.orbitank.entity.SupplyRequest;
 import br.com.orbitank.enums.RefuelOrderStatus;
 import br.com.orbitank.enums.TankStatus;
 import jakarta.validation.constraints.NotNull;
@@ -18,8 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RefuelOrderRequest {
 
-    @NotNull(message = "O pedido de suprimento é obrigatório")
-    private SupplyRequest supplyRequest;
+    @NotNull(message = "O ID do pedido de suprimento é obrigatório")
+    private Long supplyRequestId;
 
     @NotNull
     @PastOrPresent

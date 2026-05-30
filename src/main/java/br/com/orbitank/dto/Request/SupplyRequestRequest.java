@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Request;
 
-import br.com.orbitank.entity.SpaceMission;
 import br.com.orbitank.enums.SupplyRequestStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 public class SupplyRequestRequest {
 
     @NotNull(message = "O ID da missão é obrigatório")
-    private SpaceMission mission;
+    private Long missionId;
 
     @NotNull
     @PositiveOrZero

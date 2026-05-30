@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Request;
 
-import br.com.orbitank.entity.LunarStation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class StationConfigurationRequest {
 
-    private LunarStation lunarStation;
+    private Long lunarStationId;
 
     @NotNull
     private Double minimumWaterLevel;
