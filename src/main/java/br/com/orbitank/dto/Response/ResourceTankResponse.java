@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResourceTankResponse {
     private Long id;
+    private Long lunarStationId;
     private Double maxCapacity;
     private Double currentVolume;
     private Double currentPressure;

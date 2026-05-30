@@ -17,12 +17,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "tb_resource_tank")
-
 public class ResourceTank {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "station_id", nullable = false)
+    private LunarStation lunarStation;
 
     @NotNull
     @Positive(message = "A capacidade máxima deve ser maior que zero")

@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResourceTankRequest {
 
+    @NotNull(message = "O ID da estação lunar é obrigatório")
+    private Long lunarStationId;
+
     @NotNull
     @Positive(message = "A capacidade máxima deve ser maior que zero")
     private Double maxCapacity;
