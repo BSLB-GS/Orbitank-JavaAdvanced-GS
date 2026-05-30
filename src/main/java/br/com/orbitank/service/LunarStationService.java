@@ -24,7 +24,14 @@ public class LunarStationService {
 
     public LunarStationResponse findById(Long id) {
         LunarStation entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Estação não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Estação não encontrada com o ID: " + id));
+
+        return toResponse(entity);
+    }
+
+    public LunarStationResponse findByStationCode(Long stationCode) {
+        LunarStation entity = repository.findByStationCode(stationCode)
+                .orElseThrow(() -> new RuntimeException("Estação não encontrada com o código: " + stationCode));
 
         return toResponse(entity);
     }
@@ -36,8 +43,9 @@ public class LunarStationService {
 
     public LunarStationResponse update(Long id, LunarStationRequest request) {
         LunarStation entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Estação não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Estação não encontrada com o ID: " + id));
 
+        entity.setStationCode(request.getStationCode());
         entity.setName(request.getName());
         entity.setLocation(request.getLocation());
         entity.setStatus(request.getStatus());
@@ -52,6 +60,7 @@ public class LunarStationService {
     private LunarStationResponse toResponse(LunarStation entity) {
         return LunarStationResponse.builder()
                 .id(entity.getId())
+                .stationCode(entity.getStationCode())
                 .name(entity.getName())
                 .location(entity.getLocation())
                 .status(entity.getStatus())
@@ -60,6 +69,7 @@ public class LunarStationService {
 
     private LunarStation toEntity(LunarStationRequest request) {
         return LunarStation.builder()
+                .stationCode(request.getStationCode())
                 .name(request.getName())
                 .location(request.getLocation())
                 .status(request.getStatus())

@@ -29,6 +29,14 @@ public class LunarStationController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    // ESP32
+    @GetMapping("/code/{stationCode}")
+    public ResponseEntity<LunarStationResponse> findByStationCode(
+            @PathVariable Long stationCode
+    ) {
+        return ResponseEntity.ok(service.findByStationCode(stationCode));
+    }
+
     @PostMapping
     public ResponseEntity<LunarStationResponse> create(
             @RequestBody @Valid LunarStationRequest request
