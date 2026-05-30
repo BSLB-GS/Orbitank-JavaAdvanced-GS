@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Request;
 
-import br.com.orbitank.entity.Sensor;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 public class SensorReadingRequest {
 
     @NotNull(message = "O sensor é obrigatório")
-    private Sensor sensor;
+    private Long sensorId;
 
     @NotNull(message = "O valor da leitura é obrigatório")
     private Double readingValue;

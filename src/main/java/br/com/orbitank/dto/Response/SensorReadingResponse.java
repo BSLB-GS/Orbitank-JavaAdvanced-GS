@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SensorReadingResponse {
     private Long id;
-    private Sensor sensor;
+    private Long sensorId;
     private Double readingValue;
     private LocalDateTime timestamp;
 }
