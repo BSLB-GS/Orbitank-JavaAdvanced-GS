@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MiningRobotResponse {
     private Long id;
+    private Long lunarStationId;
     private String identification;
     private Double currentVolume;
     private Double cargoCapacity;

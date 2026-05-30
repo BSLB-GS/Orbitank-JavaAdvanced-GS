@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MiningRobotRequest {
 
+    @NotNull(message = "O ID da estação lunar é obrigatório")
+    private Long lunarStationId;
+
     @NotBlank(message = "A identificação é obrigatória")
     @Size(min = 3, max = 50)
     private String identification;

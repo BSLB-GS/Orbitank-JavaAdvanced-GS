@@ -14,12 +14,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "tb_mining_robot")
-
 public class MiningRobot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "station_id", nullable = false)
+    private LunarStation lunarStation;
 
     @NotBlank(message = "A identificação é obrigatória")
     @Size(min = 3, max = 50)
