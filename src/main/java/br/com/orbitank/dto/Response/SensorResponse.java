@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SensorResponse {
     private Long id;
+    private Long lunarStationId;
     private String identifier;
     private String location;
     private SensorStatus status;

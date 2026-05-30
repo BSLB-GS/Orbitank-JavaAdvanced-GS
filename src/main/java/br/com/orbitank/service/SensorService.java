@@ -2,7 +2,9 @@ package br.com.orbitank.service;
 
 import br.com.orbitank.dto.Request.SensorRequest;
 import br.com.orbitank.dto.Response.SensorResponse;
+import br.com.orbitank.entity.LunarStation;
 import br.com.orbitank.entity.Sensor;
+import br.com.orbitank.repository.LunarStationRepository;
 import br.com.orbitank.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 public class SensorService {
 
     private final SensorRepository repository;
+    private final LunarStationRepository lunarStationRepository;
 
     public List<SensorResponse> findAll() {
         return repository.findAll()
@@ -38,6 +41,10 @@ public class SensorService {
         Sensor sensor = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sensor não encontrado"));
 
+        LunarStation station = lunarStationRepository.findById(request.getLunarStationId())
+                .orElseThrow(() -> new RuntimeException("Estação Lunar não encontrada com o ID: " + request.getLunarStationId()));
+
+        sensor.setLunarStation(station);
         sensor.setIdentifier(request.getIdentifier());
         sensor.setLocation(request.getLocation());
         sensor.setStatus(request.getStatus());
@@ -56,6 +63,7 @@ public class SensorService {
     private SensorResponse toResponse(Sensor sensor) {
         return SensorResponse.builder()
                 .id(sensor.getId())
+                .lunarStationId(sensor.getLunarStation().getId())
                 .identifier(sensor.getIdentifier())
                 .location(sensor.getLocation())
                 .status(sensor.getStatus())
@@ -64,8 +72,11 @@ public class SensorService {
     }
 
     private Sensor toEntity(SensorRequest request) {
-        return Sensor.builder()
+        LunarStation station = lunarStationRepository.findById(request.getLunarStationId())
+                .orElseThrow(() -> new RuntimeException("Estação Lunar não encontrada com o ID: " + request.getLunarStationId()));
 
+        return Sensor.builder()
+                .lunarStation(station)
                 .identifier(request.getIdentifier())
                 .location(request.getLocation())
                 .status(request.getStatus())

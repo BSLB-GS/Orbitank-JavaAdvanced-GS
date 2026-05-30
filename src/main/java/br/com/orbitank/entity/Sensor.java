@@ -17,12 +17,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "tb_sensor")
-
 public class Sensor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "station_id", nullable = false)
+    private LunarStation lunarStation;
 
     @NotBlank(message = "O identificador do sensor é obrigatório")
     @Size(max = 50, message = "O identificador deve ter no máximo 50 caracteres")

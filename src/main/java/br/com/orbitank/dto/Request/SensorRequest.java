@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SensorRequest {
 
+    @NotNull(message = "O ID da estação lunar é obrigatório")
+    private Long lunarStationId;
+
     @NotBlank(message = "O identificador do sensor é obrigatório")
     @Size(max = 50, message = "O identificador deve ter no máximo 50 caracteres")
     private String identifier;
