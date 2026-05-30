@@ -1,6 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.dto.SensorReadingDTO;
+import br.com.orbitank.dto.Request.SensorReadingRequest;
+import br.com.orbitank.dto.Response.SensorReadingResponse;
 import br.com.orbitank.service.SensorReadingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,49 +18,37 @@ public class SensorReadingController {
     private final SensorReadingService service;
 
     @GetMapping
-    public List<SensorReadingDTO> findAll() {
-
-        return service.findAll();
+    public ResponseEntity<List<SensorReadingResponse>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SensorReadingDTO> findById(
+    public ResponseEntity<SensorReadingResponse> findById(
             @PathVariable Long id
     ) {
-
-        return ResponseEntity.ok(
-                service.findById(id)
-        );
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<SensorReadingDTO> create(
-            @RequestBody @Valid SensorReadingDTO dto
+    public ResponseEntity<SensorReadingResponse> create(
+            @RequestBody @Valid SensorReadingRequest request
     ) {
-
-        return ResponseEntity.ok(
-                service.create(dto)
-        );
+        return ResponseEntity.ok(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SensorReadingDTO> update(
+    public ResponseEntity<SensorReadingResponse> update(
             @PathVariable Long id,
-            @RequestBody @Valid SensorReadingDTO dto
+            @RequestBody @Valid SensorReadingRequest request
     ) {
-
-        return ResponseEntity.ok(
-                service.update(id, dto)
-        );
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
     ) {
-
         service.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }

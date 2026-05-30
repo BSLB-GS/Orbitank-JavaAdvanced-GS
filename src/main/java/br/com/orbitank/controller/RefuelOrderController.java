@@ -1,6 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.dto.RefuelOrderDTO;
+import br.com.orbitank.dto.Request.RefuelOrderRequest;
+import br.com.orbitank.dto.Response.RefuelOrderResponse;
 import br.com.orbitank.service.RefuelOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,43 +18,37 @@ public class RefuelOrderController {
     private final RefuelOrderService service;
 
     @GetMapping
-    public ResponseEntity<List<RefuelOrderDTO>> findAll() {
-
+    public ResponseEntity<List<RefuelOrderResponse>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RefuelOrderDTO> findById(
+    public ResponseEntity<RefuelOrderResponse> findById(
             @PathVariable Long id
     ) {
-
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<RefuelOrderDTO> create(
-            @RequestBody @Valid RefuelOrderDTO dto
+    public ResponseEntity<RefuelOrderResponse> create(
+            @RequestBody @Valid RefuelOrderRequest request
     ) {
-
-        return ResponseEntity.ok(service.create(dto));
+        return ResponseEntity.ok(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RefuelOrderDTO> update(
+    public ResponseEntity<RefuelOrderResponse> update(
             @PathVariable Long id,
-            @RequestBody @Valid RefuelOrderDTO dto
+            @RequestBody @Valid RefuelOrderRequest request
     ) {
-
-        return ResponseEntity.ok(service.update(id, dto));
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
     ) {
-
         service.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }

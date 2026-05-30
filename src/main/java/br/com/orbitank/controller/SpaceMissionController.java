@@ -1,6 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.dto.SpaceMissionDTO;
+import br.com.orbitank.dto.Request.SpaceMissionRequest;
+import br.com.orbitank.dto.Response.SpaceMissionResponse;
 import br.com.orbitank.service.SpaceMissionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,43 +18,37 @@ public class SpaceMissionController {
     private final SpaceMissionService service;
 
     @GetMapping
-    public ResponseEntity<List<SpaceMissionDTO>> findAll() {
-
+    public ResponseEntity<List<SpaceMissionResponse>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SpaceMissionDTO> findById(
+    public ResponseEntity<SpaceMissionResponse> findById(
             @PathVariable Long id
     ) {
-
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<SpaceMissionDTO> create(
-            @RequestBody @Valid SpaceMissionDTO dto
+    public ResponseEntity<SpaceMissionResponse> create(
+            @RequestBody @Valid SpaceMissionRequest request
     ) {
-
-        return ResponseEntity.ok(service.create(dto));
+        return ResponseEntity.ok(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SpaceMissionDTO> update(
+    public ResponseEntity<SpaceMissionResponse> update(
             @PathVariable Long id,
-            @RequestBody @Valid SpaceMissionDTO dto
+            @RequestBody @Valid SpaceMissionRequest request
     ) {
-
-        return ResponseEntity.ok(service.update(id, dto));
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
     ) {
-
         service.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }

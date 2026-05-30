@@ -1,6 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.dto.MiningRobotDTO;
+import br.com.orbitank.dto.Request.MiningRobotRequest;
+import br.com.orbitank.dto.Response.MiningRobotResponse;
 import br.com.orbitank.service.MiningRobotService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,43 +18,37 @@ public class MiningRobotController {
     private final MiningRobotService service;
 
     @GetMapping
-    public ResponseEntity<List<MiningRobotDTO>> findAll() {
-
+    public ResponseEntity<List<MiningRobotResponse>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MiningRobotDTO> findById(
+    public ResponseEntity<MiningRobotResponse> findById(
             @PathVariable Long id
     ) {
-
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<MiningRobotDTO> create(
-            @RequestBody @Valid MiningRobotDTO dto
+    public ResponseEntity<MiningRobotResponse> create(
+            @RequestBody @Valid MiningRobotRequest request
     ) {
-
-        return ResponseEntity.ok(service.create(dto));
+        return ResponseEntity.ok(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MiningRobotDTO> update(
+    public ResponseEntity<MiningRobotResponse> update(
             @PathVariable Long id,
-            @RequestBody @Valid MiningRobotDTO dto
+            @RequestBody @Valid MiningRobotRequest request
     ) {
-
-        return ResponseEntity.ok(service.update(id, dto));
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
     ) {
-
         service.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }

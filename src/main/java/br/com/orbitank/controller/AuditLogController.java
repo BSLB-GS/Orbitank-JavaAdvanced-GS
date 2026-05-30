@@ -1,6 +1,7 @@
 package br.com.orbitank.controller;
 
-import br.com.orbitank.dto.AuditLogDTO;
+import br.com.orbitank.dto.Request.AuditLogRequest;
+import br.com.orbitank.dto.Response.AuditLogResponse;
 import br.com.orbitank.service.AuditLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,43 +18,37 @@ public class AuditLogController {
     private final AuditLogService service;
 
     @GetMapping
-    public ResponseEntity<List<AuditLogDTO>> findAll() {
-
+    public ResponseEntity<List<AuditLogResponse>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuditLogDTO> findById(
+    public ResponseEntity<AuditLogResponse> findById(
             @PathVariable Long id
     ) {
-
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<AuditLogDTO> create(
-            @RequestBody @Valid AuditLogDTO dto
+    public ResponseEntity<AuditLogResponse> create(
+            @RequestBody @Valid AuditLogRequest request
     ) {
-
-        return ResponseEntity.ok(service.create(dto));
+        return ResponseEntity.ok(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AuditLogDTO> update(
+    public ResponseEntity<AuditLogResponse> update(
             @PathVariable Long id,
-            @RequestBody @Valid AuditLogDTO dto
+            @RequestBody @Valid AuditLogRequest request
     ) {
-
-        return ResponseEntity.ok(service.update(id, dto));
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
     ) {
-
         service.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }
