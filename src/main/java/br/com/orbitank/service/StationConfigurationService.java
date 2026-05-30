@@ -2,7 +2,9 @@ package br.com.orbitank.service;
 
 import br.com.orbitank.dto.Request.StationConfigurationRequest;
 import br.com.orbitank.dto.Response.StationConfigurationResponse;
+import br.com.orbitank.entity.LunarStation;
 import br.com.orbitank.entity.StationConfiguration;
+import br.com.orbitank.repository.LunarStationRepository;
 import br.com.orbitank.repository.StationConfigurationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class StationConfigurationService {
 
     private final StationConfigurationRepository repository;
+    private final LunarStationRepository lunarStationRepository;
 
     public List<StationConfigurationResponse> findAll() {
         return repository.findAll()
@@ -43,7 +46,14 @@ public class StationConfigurationService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Configuração não encontrada com o ID: " + id));
 
-        config.setLunarStation(request.getLunarStation());
+        LunarStation station = null;
+        if (request.getLunarStationId() != null) {
+            station = lunarStationRepository.findById(request.getLunarStationId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Estação Lunar não encontrada com o ID: " + request.getLunarStationId()));
+        }
+
+        config.setLunarStation(station);
         config.setMinimumWaterLevel(request.getMinimumWaterLevel());
         config.setMinimumHydrogenLevel(request.getMinimumHydrogenLevel());
         config.setMinimumOxygenLevel(request.getMinimumOxygenLevel());
@@ -81,8 +91,15 @@ public class StationConfigurationService {
     }
 
     private StationConfiguration toEntity(StationConfigurationRequest request) {
+        LunarStation station = null;
+        if (request.getLunarStationId() != null) {
+            station = lunarStationRepository.findById(request.getLunarStationId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Estação Lunar não encontrada com o ID: " + request.getLunarStationId()));
+        }
+
         return StationConfiguration.builder()
-                .lunarStation(request.getLunarStation())
+                .lunarStation(station)
                 .minimumWaterLevel(request.getMinimumWaterLevel())
                 .minimumHydrogenLevel(request.getMinimumHydrogenLevel())
                 .minimumOxygenLevel(request.getMinimumOxygenLevel())

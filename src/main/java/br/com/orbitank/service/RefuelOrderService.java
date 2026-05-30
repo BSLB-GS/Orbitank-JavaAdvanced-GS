@@ -3,7 +3,9 @@ package br.com.orbitank.service;
 import br.com.orbitank.dto.Request.RefuelOrderRequest;
 import br.com.orbitank.dto.Response.RefuelOrderResponse;
 import br.com.orbitank.entity.RefuelOrder;
+import br.com.orbitank.entity.SupplyRequest;
 import br.com.orbitank.repository.RefuelOrderRepository;
+import br.com.orbitank.repository.SupplyRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.List;
 public class RefuelOrderService {
 
     private final RefuelOrderRepository repository;
+    private final SupplyRequestRepository supplyRequestRepository;
 
     public List<RefuelOrderResponse> findAll() {
         return repository.findAll()
@@ -37,7 +40,10 @@ public class RefuelOrderService {
         RefuelOrder entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ordem não encontrada"));
 
-        entity.setSupplyRequest(request.getSupplyRequest());
+        SupplyRequest supplyRequest = supplyRequestRepository.findById(request.getSupplyRequestId())
+                .orElseThrow(() -> new RuntimeException("Solicitação não encontrada"));
+
+        entity.setSupplyRequest(supplyRequest);
         entity.setStartDate(request.getStartDate());
         entity.setEndDate(request.getEndDate());
         entity.setActualWaterTransferred(request.getActualWaterTransferred());
@@ -68,8 +74,11 @@ public class RefuelOrderService {
     }
 
     private RefuelOrder toEntity(RefuelOrderRequest request) {
+        SupplyRequest supplyRequest = supplyRequestRepository.findById(request.getSupplyRequestId())
+                .orElseThrow(() -> new RuntimeException("Solicitação não encontrada"));
+
         return RefuelOrder.builder()
-                .supplyRequest(request.getSupplyRequest())
+                .supplyRequest(supplyRequest)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .actualWaterTransferred(request.getActualWaterTransferred())

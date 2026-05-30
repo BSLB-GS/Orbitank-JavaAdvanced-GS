@@ -2,7 +2,9 @@ package br.com.orbitank.service;
 
 import br.com.orbitank.dto.Request.SpaceMissionRequest;
 import br.com.orbitank.dto.Response.SpaceMissionResponse;
+import br.com.orbitank.entity.OperationalUser;
 import br.com.orbitank.entity.SpaceMission;
+import br.com.orbitank.repository.OperationalUserRepository;
 import br.com.orbitank.repository.SpaceMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 public class SpaceMissionService {
 
     private final SpaceMissionRepository repository;
+    private final OperationalUserRepository userRepository;
 
     public List<SpaceMissionResponse> findAll() {
         return repository.findAll()
@@ -38,13 +41,16 @@ public class SpaceMissionService {
         SpaceMission entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Missão espacial não encontrada"));
 
+        OperationalUser createdBy = userRepository.findById(request.getCreatedByUserId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         entity.setMissionCode(request.getMissionCode());
         entity.setMissionName(request.getMissionName());
         entity.setClientCompanyName(request.getClientCompanyName());
         entity.setExternalCommercialRequestCode(request.getExternalCommercialRequestCode());
         entity.setDestination(request.getDestination());
         entity.setScheduledLaunchDate(request.getScheduledLaunchDate());
-        entity.setCreatedBy(request.getCreatedBy());
+        entity.setCreatedBy(createdBy);
         entity.setStatus(request.getStatus());
         entity.setPriority(request.getPriority());
 
@@ -71,6 +77,9 @@ public class SpaceMissionService {
     }
 
     private SpaceMission toEntity(SpaceMissionRequest request) {
+        OperationalUser createdBy = userRepository.findById(request.getCreatedByUserId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         return SpaceMission.builder()
                 .missionCode(request.getMissionCode())
                 .missionName(request.getMissionName())
@@ -78,7 +87,7 @@ public class SpaceMissionService {
                 .externalCommercialRequestCode(request.getExternalCommercialRequestCode())
                 .destination(request.getDestination())
                 .scheduledLaunchDate(request.getScheduledLaunchDate())
-                .createdBy(request.getCreatedBy())
+                .createdBy(createdBy)
                 .status(request.getStatus())
                 .priority(request.getPriority())
                 .build();
