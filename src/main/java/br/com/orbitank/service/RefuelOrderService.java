@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.RefuelOrderDTO;
+import br.com.orbitank.dto.Request.RefuelOrderRequest;
+import br.com.orbitank.dto.Response.RefuelOrderResponse;
 import br.com.orbitank.entity.RefuelOrder;
 import br.com.orbitank.repository.RefuelOrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,64 +15,68 @@ public class RefuelOrderService {
 
     private final RefuelOrderRepository repository;
 
-    public List<RefuelOrderDTO> findAll() {
-
+    public List<RefuelOrderResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public RefuelOrderDTO findById(Long id) {
-
+    public RefuelOrderResponse findById(Long id) {
         RefuelOrder entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ordem não encontrada"));
 
-        return toDTO(entity);
+        return toResponse(entity);
     }
 
-    public RefuelOrderDTO create(RefuelOrderDTO dto) {
-
-        return toDTO(repository.save(toEntity(dto)));
+    public RefuelOrderResponse create(RefuelOrderRequest request) {
+        return toResponse(repository.save(toEntity(request)));
     }
 
-    public RefuelOrderDTO update(Long id, RefuelOrderDTO dto) {
-
+    public RefuelOrderResponse update(Long id, RefuelOrderRequest request) {
         RefuelOrder entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ordem não encontrada"));
 
-        entity.setActualWaterTransferred(dto.getActualWaterTransferred());
+        entity.setSupplyRequest(request.getSupplyRequest());
+        entity.setStartDate(request.getStartDate());
+        entity.setEndDate(request.getEndDate());
+        entity.setActualWaterTransferred(request.getActualWaterTransferred());
+        entity.setActualH2Transferred(request.getActualH2Transferred());
+        entity.setActualO2Transferred(request.getActualO2Transferred());
+        entity.setStatus(request.getStatus());
+        entity.setTankStatus(request.getTankStatus());
 
-        entity.setActualH2Transferred(dto.getActualH2Transferred());
-
-        entity.setActualO2Transferred(dto.getActualO2Transferred());
-
-        return toDTO(repository.save(entity));
+        return toResponse(repository.save(entity));
     }
 
     public void delete(Long id) {
-
         repository.deleteById(id);
     }
 
-    private RefuelOrderDTO toDTO(RefuelOrder entity) {
-
-        return RefuelOrderDTO.builder()
+    private RefuelOrderResponse toResponse(RefuelOrder entity) {
+        return RefuelOrderResponse.builder()
                 .id(entity.getId())
+                .supplyRequest(entity.getSupplyRequest())
+                .startDate(entity.getStartDate())
+                .endDate(entity.getEndDate())
                 .actualWaterTransferred(entity.getActualWaterTransferred())
                 .actualH2Transferred(entity.getActualH2Transferred())
                 .actualO2Transferred(entity.getActualO2Transferred())
-                .status(entity.getStatus().name())
+                .status(entity.getStatus())
+                .tankStatus(entity.getTankStatus())
                 .build();
     }
 
-    private RefuelOrder toEntity(RefuelOrderDTO dto) {
-
+    private RefuelOrder toEntity(RefuelOrderRequest request) {
         return RefuelOrder.builder()
-                .id(dto.getId())
-                .actualWaterTransferred(dto.getActualWaterTransferred())
-                .actualH2Transferred(dto.getActualH2Transferred())
-                .actualO2Transferred(dto.getActualO2Transferred())
+                .supplyRequest(request.getSupplyRequest())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .actualWaterTransferred(request.getActualWaterTransferred())
+                .actualH2Transferred(request.getActualH2Transferred())
+                .actualO2Transferred(request.getActualO2Transferred())
+                .status(request.getStatus())
+                .tankStatus(request.getTankStatus())
                 .build();
     }
 }

@@ -1,9 +1,8 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.SensorDTO;
+import br.com.orbitank.dto.Request.SensorRequest;
+import br.com.orbitank.dto.Response.SensorResponse;
 import br.com.orbitank.entity.Sensor;
-import br.com.orbitank.enums.SensorStatus;
-import br.com.orbitank.enums.SensorType;
 import br.com.orbitank.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,85 +15,61 @@ public class SensorService {
 
     private final SensorRepository repository;
 
-    public List<SensorDTO> findAll() {
-
+    public List<SensorResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public SensorDTO findById(Long id) {
-
+    public SensorResponse findById(Long id) {
         Sensor sensor = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Sensor não encontrado")
-                );
+                .orElseThrow(() -> new RuntimeException("Sensor não encontrado"));
 
-        return toDTO(sensor);
+        return toResponse(sensor);
     }
 
-    public SensorDTO create(SensorDTO dto) {
-
-        Sensor sensor = toEntity(dto);
-
-        return toDTO(repository.save(sensor));
+    public SensorResponse create(SensorRequest request) {
+        Sensor sensor = toEntity(request);
+        return toResponse(repository.save(sensor));
     }
 
-    public SensorDTO update(Long id, SensorDTO dto) {
-
+    public SensorResponse update(Long id, SensorRequest request) {
         Sensor sensor = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Sensor não encontrado")
-                );
+                .orElseThrow(() -> new RuntimeException("Sensor não encontrado"));
 
-        sensor.setIdentifier(dto.getIdentifier());
+        sensor.setIdentifier(request.getIdentifier());
+        sensor.setLocation(request.getLocation());
+        sensor.setStatus(request.getStatus());
+        sensor.setSensorType(request.getSensorType());
 
-        sensor.setLocation(dto.getLocation());
-
-        sensor.setStatus(
-                SensorStatus.valueOf(dto.getStatus())
-        );
-
-        sensor.setSensorType(
-                SensorType.valueOf(dto.getSensorType())
-        );
-
-        return toDTO(repository.save(sensor));
+        return toResponse(repository.save(sensor));
     }
 
     public void delete(Long id) {
-
         if (!repository.existsById(id)) {
             throw new RuntimeException("Sensor não encontrado");
         }
-
         repository.deleteById(id);
     }
 
-    private SensorDTO toDTO(Sensor sensor) {
-
-        return SensorDTO.builder()
+    private SensorResponse toResponse(Sensor sensor) {
+        return SensorResponse.builder()
                 .id(sensor.getId())
                 .identifier(sensor.getIdentifier())
                 .location(sensor.getLocation())
-                .status(sensor.getStatus().name())
-                .sensorType(sensor.getSensorType().name())
+                .status(sensor.getStatus())
+                .sensorType(sensor.getSensorType())
                 .build();
     }
 
-    private Sensor toEntity(SensorDTO dto) {
-
+    private Sensor toEntity(SensorRequest request) {
         return Sensor.builder()
-                .id(dto.getId())
-                .identifier(dto.getIdentifier())
-                .location(dto.getLocation())
-                .status(
-                        SensorStatus.valueOf(dto.getStatus())
-                )
-                .sensorType(
-                        SensorType.valueOf(dto.getSensorType())
-                )
+
+                .identifier(request.getIdentifier())
+                .location(request.getLocation())
+                .status(request.getStatus())
+                .sensorType(request.getSensorType())
                 .build();
     }
 }

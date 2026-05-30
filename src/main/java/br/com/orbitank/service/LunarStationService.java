@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.LunarStationDTO;
+import br.com.orbitank.dto.Request.LunarStationRequest;
+import br.com.orbitank.dto.Response.LunarStationResponse;
 import br.com.orbitank.entity.LunarStation;
 import br.com.orbitank.repository.LunarStationRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,61 +15,54 @@ public class LunarStationService {
 
     private final LunarStationRepository repository;
 
-    public List<LunarStationDTO> findAll() {
-
+    public List<LunarStationResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public LunarStationDTO findById(Long id) {
-
+    public LunarStationResponse findById(Long id) {
         LunarStation entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estação não encontrada"));
 
-        return toDTO(entity);
+        return toResponse(entity);
     }
 
-    public LunarStationDTO create(LunarStationDTO dto) {
-
-        LunarStation entity = toEntity(dto);
-
-        return toDTO(repository.save(entity));
+    public LunarStationResponse create(LunarStationRequest request) {
+        LunarStation entity = toEntity(request);
+        return toResponse(repository.save(entity));
     }
 
-    public LunarStationDTO update(Long id, LunarStationDTO dto) {
-
+    public LunarStationResponse update(Long id, LunarStationRequest request) {
         LunarStation entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estação não encontrada"));
 
-        entity.setName(dto.getName());
-        entity.setLocation(dto.getLocation());
+        entity.setName(request.getName());
+        entity.setLocation(request.getLocation());
+        entity.setStatus(request.getStatus());
 
-        return toDTO(repository.save(entity));
+        return toResponse(repository.save(entity));
     }
 
     public void delete(Long id) {
-
         repository.deleteById(id);
     }
 
-    private LunarStationDTO toDTO(LunarStation entity) {
-
-        return LunarStationDTO.builder()
+    private LunarStationResponse toResponse(LunarStation entity) {
+        return LunarStationResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .location(entity.getLocation())
-                .status(entity.getStatus().name())
+                .status(entity.getStatus())
                 .build();
     }
 
-    private LunarStation toEntity(LunarStationDTO dto) {
-
+    private LunarStation toEntity(LunarStationRequest request) {
         return LunarStation.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .location(dto.getLocation())
+                .name(request.getName())
+                .location(request.getLocation())
+                .status(request.getStatus())
                 .build();
     }
 }

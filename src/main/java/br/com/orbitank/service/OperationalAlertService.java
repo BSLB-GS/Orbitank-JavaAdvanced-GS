@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.OperationalAlertDTO;
+import br.com.orbitank.dto.Request.OperationalAlertRequest;
+import br.com.orbitank.dto.Response.OperationalAlertResponse;
 import br.com.orbitank.entity.OperationalAlert;
 import br.com.orbitank.repository.OperationalAlertRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,62 +15,62 @@ public class OperationalAlertService {
 
     private final OperationalAlertRepository repository;
 
-    public List<OperationalAlertDTO> findAll() {
-
+    public List<OperationalAlertResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public OperationalAlertDTO findById(Long id) {
-
+    public OperationalAlertResponse findById(Long id) {
         OperationalAlert entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alerta não encontrado"));
 
-        return toDTO(entity);
+        return toResponse(entity);
     }
 
-    public OperationalAlertDTO create(OperationalAlertDTO dto) {
-
-        return toDTO(repository.save(toEntity(dto)));
+    public OperationalAlertResponse create(OperationalAlertRequest request) {
+        return toResponse(repository.save(toEntity(request)));
     }
 
-    public OperationalAlertDTO update(Long id, OperationalAlertDTO dto) {
-
+    public OperationalAlertResponse update(Long id, OperationalAlertRequest request) {
         OperationalAlert entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alerta não encontrado"));
 
-        entity.setSource(dto.getSource());
-        entity.setMessage(dto.getMessage());
-        entity.setActive(dto.getActive());
+        entity.setSource(request.getSource());
+        entity.setMessage(request.getMessage());
+        entity.setActive(request.getActive());
+        entity.setTriggeredAt(request.getTriggeredAt());
+        entity.setResolvedAt(request.getResolvedAt());
+        entity.setSeverity(request.getSeverity());
 
-        return toDTO(repository.save(entity));
+        return toResponse(repository.save(entity));
     }
 
     public void delete(Long id) {
-
         repository.deleteById(id);
     }
 
-    private OperationalAlertDTO toDTO(OperationalAlert entity) {
-
-        return OperationalAlertDTO.builder()
+    private OperationalAlertResponse toResponse(OperationalAlert entity) {
+        return OperationalAlertResponse.builder()
                 .id(entity.getId())
                 .source(entity.getSource())
                 .message(entity.getMessage())
                 .active(entity.getActive())
-                .severity(entity.getSeverity().name())
+                .triggeredAt(entity.getTriggeredAt())
+                .resolvedAt(entity.getResolvedAt())
+                .severity(entity.getSeverity())
                 .build();
     }
 
-    private OperationalAlert toEntity(OperationalAlertDTO dto) {
-
+    private OperationalAlert toEntity(OperationalAlertRequest request) {
         return OperationalAlert.builder()
-                .id(dto.getId())
-                .source(dto.getSource())
-                .message(dto.getMessage())
-                .active(dto.getActive())
+                .source(request.getSource())
+                .message(request.getMessage())
+                .active(request.getActive())
+                .triggeredAt(request.getTriggeredAt())
+                .resolvedAt(request.getResolvedAt())
+                .severity(request.getSeverity())
                 .build();
     }
 }

@@ -1,9 +1,8 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.SpaceMissionDTO;
+import br.com.orbitank.dto.Request.SpaceMissionRequest;
+import br.com.orbitank.dto.Response.SpaceMissionResponse;
 import br.com.orbitank.entity.SpaceMission;
-import br.com.orbitank.enums.MissionPriority;
-import br.com.orbitank.enums.MissionStatus;
 import br.com.orbitank.repository.SpaceMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,76 +15,72 @@ public class SpaceMissionService {
 
     private final SpaceMissionRepository repository;
 
-    public List<SpaceMissionDTO> findAll() {
-
+    public List<SpaceMissionResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public SpaceMissionDTO findById(Long id) {
-
+    public SpaceMissionResponse findById(Long id) {
         SpaceMission entity = repository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("Missão espacial não encontrada"));
 
-        return toDTO(entity);
+        return toResponse(entity);
     }
 
-    public SpaceMissionDTO create(SpaceMissionDTO dto) {
-
-        SpaceMission entity = toEntity(dto);
-
-        return toDTO(repository.save(entity));
+    public SpaceMissionResponse create(SpaceMissionRequest request) {
+        SpaceMission entity = toEntity(request);
+        return toResponse(repository.save(entity));
     }
 
-    public SpaceMissionDTO update(Long id, SpaceMissionDTO dto) {
-
+    public SpaceMissionResponse update(Long id, SpaceMissionRequest request) {
         SpaceMission entity = repository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("Missão espacial não encontrada"));
 
-        entity.setMissionCode(dto.getMissionCode());
-        entity.setMissionName(dto.getMissionName());
-        entity.setDestination(dto.getDestination());
-        entity.setScheduledLaunchDate(dto.getScheduledLaunchDate());
-        entity.setStatus(MissionStatus.valueOf(dto.getStatus()));
-        entity.setPriority(MissionPriority.valueOf(dto.getPriority()));
+        entity.setMissionCode(request.getMissionCode());
+        entity.setMissionName(request.getMissionName());
+        entity.setClientCompanyName(request.getClientCompanyName());
+        entity.setExternalCommercialRequestCode(request.getExternalCommercialRequestCode());
+        entity.setDestination(request.getDestination());
+        entity.setScheduledLaunchDate(request.getScheduledLaunchDate());
+        entity.setCreatedBy(request.getCreatedBy());
+        entity.setStatus(request.getStatus());
+        entity.setPriority(request.getPriority());
 
-        return toDTO(repository.save(entity));
+        return toResponse(repository.save(entity));
     }
 
     public void delete(Long id) {
-
         repository.deleteById(id);
     }
 
-    private SpaceMissionDTO toDTO(SpaceMission entity) {
-
-        SpaceMissionDTO dto = new SpaceMissionDTO();
-
-        dto.setId(entity.getId());
-        dto.setMissionCode(entity.getMissionCode());
-        dto.setMissionName(entity.getMissionName());
-        dto.setDestination(entity.getDestination());
-        dto.setScheduledLaunchDate(entity.getScheduledLaunchDate());
-        dto.setStatus(entity.getStatus().name());
-        dto.setPriority(entity.getPriority().name());
-
-        return dto;
+    private SpaceMissionResponse toResponse(SpaceMission entity) {
+        return SpaceMissionResponse.builder()
+                .id(entity.getId())
+                .missionCode(entity.getMissionCode())
+                .missionName(entity.getMissionName())
+                .clientCompanyName(entity.getClientCompanyName())
+                .externalCommercialRequestCode(entity.getExternalCommercialRequestCode())
+                .destination(entity.getDestination())
+                .scheduledLaunchDate(entity.getScheduledLaunchDate())
+                .createdBy(entity.getCreatedBy())
+                .status(entity.getStatus())
+                .priority(entity.getPriority())
+                .build();
     }
 
-    private SpaceMission toEntity(SpaceMissionDTO dto) {
-
-        SpaceMission entity = new SpaceMission();
-
-        entity.setId(dto.getId());
-        entity.setMissionCode(dto.getMissionCode());
-        entity.setMissionName(dto.getMissionName());
-        entity.setDestination(dto.getDestination());
-        entity.setScheduledLaunchDate(dto.getScheduledLaunchDate());
-        entity.setStatus(MissionStatus.valueOf(dto.getStatus()));
-        entity.setPriority(MissionPriority.valueOf(dto.getPriority()));
-
-        return entity;
+    private SpaceMission toEntity(SpaceMissionRequest request) {
+        return SpaceMission.builder()
+                .missionCode(request.getMissionCode())
+                .missionName(request.getMissionName())
+                .clientCompanyName(request.getClientCompanyName())
+                .externalCommercialRequestCode(request.getExternalCommercialRequestCode())
+                .destination(request.getDestination())
+                .scheduledLaunchDate(request.getScheduledLaunchDate())
+                .createdBy(request.getCreatedBy())
+                .status(request.getStatus())
+                .priority(request.getPriority())
+                .build();
     }
 }

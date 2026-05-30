@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.AuditLogDTO;
+import br.com.orbitank.dto.Request.AuditLogRequest;
+import br.com.orbitank.dto.Response.AuditLogResponse;
 import br.com.orbitank.entity.AuditLog;
 import br.com.orbitank.repository.AuditLogRepository;
 import org.springframework.http.HttpStatus;
@@ -19,46 +20,47 @@ public class AuditLogService {
         this.repository = repository;
     }
 
-    public List<AuditLogDTO> findAll() {
+    public List<AuditLogResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(log -> {
-                    AuditLogDTO dto = new AuditLogDTO();
-                    dto.setId(log.getId());
-                    return dto;
-                })
+                .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    public AuditLogDTO findById(Long id) {
+    public AuditLogResponse findById(Long id) {
         AuditLog log = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Log de auditoria não encontrado com o ID: " + id));
 
-        AuditLogDTO dto = new AuditLogDTO();
-        dto.setId(log.getId());
-        return dto;
+        return convertToResponse(log);
     }
 
-    public AuditLogDTO create(AuditLogDTO dto) {
+    public AuditLogResponse create(AuditLogRequest request) {
         AuditLog log = new AuditLog();
+
+        log.setUser(request.getUser());
+        log.setAction(request.getAction());
+        log.setDescription(request.getDescription());
+        log.setCreatedAt(request.getCreatedAt());
+
         AuditLog savedLog = repository.save(log);
 
-        AuditLogDTO resultDto = new AuditLogDTO();
-        resultDto.setId(savedLog.getId());
-        return resultDto;
+        return convertToResponse(savedLog);
     }
 
-    public AuditLogDTO update(Long id, AuditLogDTO dto) {
+    public AuditLogResponse update(Long id, AuditLogRequest request) {
         AuditLog log = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Log de auditoria não encontrado com o ID: " + id));
+
+        log.setUser(request.getUser());
+        log.setAction(request.getAction());
+        log.setDescription(request.getDescription());
+        log.setCreatedAt(request.getCreatedAt());
 
         AuditLog updatedLog = repository.save(log);
 
-        AuditLogDTO resultDto = new AuditLogDTO();
-        resultDto.setId(updatedLog.getId());
-        return resultDto;
+        return convertToResponse(updatedLog);
     }
 
     public void delete(Long id) {
@@ -66,5 +68,15 @@ public class AuditLogService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Log de auditoria não encontrado com o ID: " + id));
         repository.delete(log);
+    }
+
+    private AuditLogResponse convertToResponse(AuditLog log) {
+        return AuditLogResponse.builder()
+                .id(log.getId())
+                .user(log.getUser())
+                .action(log.getAction())
+                .description(log.getDescription())
+                .createdAt(log.getCreatedAt())
+                .build();
     }
 }

@@ -1,8 +1,10 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.OperationalUserDTO;
+import br.com.orbitank.dto.Request.OperationalUserRequest;
+import br.com.orbitank.dto.Response.OperationalUserResponse;
 import br.com.orbitank.entity.OperationalUser;
 import br.com.orbitank.repository.OperationalUserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,59 +13,47 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OperationalUserService {
 
     private final OperationalUserRepository repository;
 
-    public OperationalUserService(OperationalUserRepository repository) {
-        this.repository = repository;
-    }
-
-    public List<OperationalUserDTO> findAll() {
+    public List<OperationalUserResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(user -> {
-                    OperationalUserDTO dto = new OperationalUserDTO();
-                    dto.setId(user.getId());
-                    // Se o seu DTO tiver mais campos (ex: nome, email), preencha-os aqui:
-                    // dto.setName(user.getName());
-                    return dto;
-                })
+                .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
-    public OperationalUserDTO findById(Long id) {
+    public OperationalUserResponse findById(Long id) {
         OperationalUser user = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuário operacional não encontrado com o ID: " + id));
 
-        OperationalUserDTO dto = new OperationalUserDTO();
-        dto.setId(user.getId());
-        return dto;
+        return toResponse(user);
     }
 
-
-    public OperationalUserDTO create(OperationalUserDTO dto) {
-        OperationalUser user = new OperationalUser();
-        // user.setName(dto.getName());
-
-        OperationalUser savedUser = repository.save(user);
-
-        OperationalUserDTO resultDto = new OperationalUserDTO();
-        resultDto.setId(savedUser.getId());
-        return resultDto;
+    public OperationalUserResponse create(OperationalUserRequest request) {
+        OperationalUser user = toEntity(request);
+        return toResponse(repository.save(user));
     }
 
-    public OperationalUserDTO update(Long id, OperationalUserDTO dto) {
+    public OperationalUserResponse update(Long id, OperationalUserRequest request) {
         OperationalUser user = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuário operacional não encontrado com o ID: " + id));
+
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPasswordHash(request.getPasswordHash());
+        user.setRole(request.getRole());
+        user.setStatus(request.getStatus());
+        user.setCreatedAt(request.getCreatedAt());
+        user.setLastLoginAt(request.getLastLoginAt());
 
         OperationalUser updatedUser = repository.save(user);
 
-        OperationalUserDTO resultDto = new OperationalUserDTO();
-        resultDto.setId(updatedUser.getId());
-        return resultDto;
+        return toResponse(updatedUser);
     }
 
     public void delete(Long id) {
@@ -71,5 +61,30 @@ public class OperationalUserService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuário operacional não encontrado com o ID: " + id));
         repository.delete(user);
+    }
+
+    private OperationalUserResponse toResponse(OperationalUser entity) {
+        return OperationalUserResponse.builder()
+                .id(entity.getId())
+                .fullName(entity.getFullName())
+                .email(entity.getEmail())
+                .passwordHash(entity.getPasswordHash())
+                .role(entity.getRole())
+                .status(entity.getStatus())
+                .createdAt(entity.getCreatedAt())
+                .lastLoginAt(entity.getLastLoginAt())
+                .build();
+    }
+
+    private OperationalUser toEntity(OperationalUserRequest request) {
+        return OperationalUser.builder()
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .passwordHash(request.getPasswordHash())
+                .role(request.getRole())
+                .status(request.getStatus())
+                .createdAt(request.getCreatedAt())
+                .lastLoginAt(request.getLastLoginAt())
+                .build();
     }
 }

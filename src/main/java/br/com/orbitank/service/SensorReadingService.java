@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.SensorReadingDTO;
+import br.com.orbitank.dto.Request.SensorReadingRequest;
+import br.com.orbitank.dto.Response.SensorReadingResponse;
 import br.com.orbitank.entity.SensorReading;
 import br.com.orbitank.repository.SensorReadingRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,64 +15,54 @@ public class SensorReadingService {
 
     private final SensorReadingRepository repository;
 
-    public List<SensorReadingDTO> findAll() {
-
+    public List<SensorReadingResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public SensorReadingDTO findById(Long id) {
-
+    public SensorReadingResponse findById(Long id) {
         SensorReading entity = repository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("Leitura do sensor não encontrada"));
 
-        return toDTO(entity);
+        return toResponse(entity);
     }
 
-    public SensorReadingDTO create(SensorReadingDTO dto) {
-
-        SensorReading entity = toEntity(dto);
-
-        return toDTO(repository.save(entity));
+    public SensorReadingResponse create(SensorReadingRequest request) {
+        SensorReading entity = toEntity(request);
+        return toResponse(repository.save(entity));
     }
 
-    public SensorReadingDTO update(Long id, SensorReadingDTO dto) {
-
+    public SensorReadingResponse update(Long id, SensorReadingRequest request) {
         SensorReading entity = repository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("Leitura do sensor não encontrada"));
 
-        entity.setReadingValue(dto.getReadingValue());
-        entity.setTimestamp(dto.getTimestamp());
+        entity.setSensor(request.getSensor());
+        entity.setReadingValue(request.getReadingValue());
+        entity.setTimestamp(request.getTimestamp());
 
-        return toDTO(repository.save(entity));
+        return toResponse(repository.save(entity));
     }
 
     public void delete(Long id) {
-
         repository.deleteById(id);
     }
 
-    private SensorReadingDTO toDTO(SensorReading entity) {
-
-        SensorReadingDTO dto = new SensorReadingDTO();
-
-        dto.setId(entity.getId());
-        dto.setReadingValue(entity.getReadingValue());
-        dto.setTimestamp(entity.getTimestamp());
-
-        return dto;
+    private SensorReadingResponse toResponse(SensorReading entity) {
+        return SensorReadingResponse.builder()
+                .id(entity.getId())
+                .sensor(entity.getSensor())
+                .readingValue(entity.getReadingValue())
+                .timestamp(entity.getTimestamp())
+                .build();
     }
 
-    private SensorReading toEntity(SensorReadingDTO dto) {
-
-        SensorReading entity = new SensorReading();
-
-        entity.setId(dto.getId());
-        entity.setReadingValue(dto.getReadingValue());
-        entity.setTimestamp(dto.getTimestamp());
-
-        return entity;
+    private SensorReading toEntity(SensorReadingRequest request) {
+        return SensorReading.builder()
+                .sensor(request.getSensor())
+                .readingValue(request.getReadingValue())
+                .timestamp(request.getTimestamp())
+                .build();
     }
 }

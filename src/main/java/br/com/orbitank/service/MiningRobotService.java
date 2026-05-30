@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
-import br.com.orbitank.dto.MiningRobotDTO;
+import br.com.orbitank.dto.Request.MiningRobotRequest;
+import br.com.orbitank.dto.Response.MiningRobotResponse;
 import br.com.orbitank.entity.MiningRobot;
 import br.com.orbitank.repository.MiningRobotRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,68 +15,63 @@ public class MiningRobotService {
 
     private final MiningRobotRepository repository;
 
-    public List<MiningRobotDTO> findAll() {
-
+    public List<MiningRobotResponse> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponse)
                 .toList();
     }
 
-    public MiningRobotDTO findById(Long id) {
-
+    public MiningRobotResponse findById(Long id) {
         MiningRobot entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Robô não encontrado"));
 
-        return toDTO(entity);
+        return toResponse(entity);
     }
 
-    public MiningRobotDTO create(MiningRobotDTO dto) {
-
-        return toDTO(repository.save(toEntity(dto)));
+    public MiningRobotResponse create(MiningRobotRequest request) {
+        return toResponse(repository.save(toEntity(request)));
     }
 
-    public MiningRobotDTO update(Long id, MiningRobotDTO dto) {
-
+    public MiningRobotResponse update(Long id, MiningRobotRequest request) {
         MiningRobot entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Robô não encontrado"));
 
-        entity.setIdentification(dto.getIdentification());
-        entity.setCurrentVolume(dto.getCurrentVolume());
-        entity.setCargoCapacity(dto.getCargoCapacity());
-        entity.setCurrentIceCargo(dto.getCurrentIceCargo());
-        entity.setBatteryLevel(dto.getBatteryLevel());
+        entity.setIdentification(request.getIdentification());
+        entity.setCurrentVolume(request.getCurrentVolume());
+        entity.setCargoCapacity(request.getCargoCapacity());
+        entity.setCurrentIceCargo(request.getCurrentIceCargo());
+        entity.setBatteryLevel(request.getBatteryLevel());
+        entity.setStatus(request.getStatus());
 
-        return toDTO(repository.save(entity));
+        return toResponse(repository.save(entity));
     }
 
     public void delete(Long id) {
-
         repository.deleteById(id);
     }
 
-    private MiningRobotDTO toDTO(MiningRobot entity) {
-
-        return MiningRobotDTO.builder()
+    private MiningRobotResponse toResponse(MiningRobot entity) {
+        return MiningRobotResponse.builder()
                 .id(entity.getId())
                 .identification(entity.getIdentification())
                 .currentVolume(entity.getCurrentVolume())
                 .cargoCapacity(entity.getCargoCapacity())
                 .currentIceCargo(entity.getCurrentIceCargo())
                 .batteryLevel(entity.getBatteryLevel())
-                .status(entity.getStatus().name())
+                .status(entity.getStatus())
                 .build();
     }
 
-    private MiningRobot toEntity(MiningRobotDTO dto) {
-
+    private MiningRobot toEntity(MiningRobotRequest request) {
         return MiningRobot.builder()
-                .id(dto.getId())
-                .identification(dto.getIdentification())
-                .currentVolume(dto.getCurrentVolume())
-                .cargoCapacity(dto.getCargoCapacity())
-                .currentIceCargo(dto.getCurrentIceCargo())
-                .batteryLevel(dto.getBatteryLevel())
+
+                .identification(request.getIdentification())
+                .currentVolume(request.getCurrentVolume())
+                .cargoCapacity(request.getCargoCapacity())
+                .currentIceCargo(request.getCurrentIceCargo())
+                .batteryLevel(request.getBatteryLevel())
+                .status(request.getStatus())
                 .build();
     }
 }
