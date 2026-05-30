@@ -19,12 +19,15 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table(name = "tb_operational_alert")
-
 public class OperationalAlert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "station_id", nullable = false)
+    private LunarStation lunarStation;
 
     @NotBlank(message = "A origem do alerta deve ser identificada")
     @Column(nullable = false)

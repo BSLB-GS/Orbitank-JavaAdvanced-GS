@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OperationalAlertResponse {
     private Long id;
+    private Long lunarStationId;
     private String source;
     private String message;
     private Boolean active;

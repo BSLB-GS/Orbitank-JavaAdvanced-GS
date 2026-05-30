@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OperationalAlertRequest {
 
+    @NotNull(message = "O ID da estação lunar é obrigatório")
+    private Long lunarStationId;
+
     @NotBlank(message = "A origem do alerta deve ser identificada")
     private String source;
 
