@@ -9,4 +9,6 @@ public interface OperationalUserRepository
         extends JpaRepository<OperationalUser, Long> {
 
     Optional<OperationalUser> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

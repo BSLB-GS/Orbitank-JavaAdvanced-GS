@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/operational-users")
+@RequestMapping("admin/operational-users")
 @RequiredArgsConstructor
 public class OperationalUserController {
 
