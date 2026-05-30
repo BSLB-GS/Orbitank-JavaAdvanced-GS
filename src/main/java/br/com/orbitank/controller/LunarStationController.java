@@ -2,6 +2,7 @@ package br.com.orbitank.controller;
 
 import br.com.orbitank.dto.Request.LunarStationRequest;
 import br.com.orbitank.dto.Response.LunarStationResponse;
+import br.com.orbitank.dto.Response.StationDashboardResponse;
 import br.com.orbitank.service.LunarStationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,13 @@ public class LunarStationController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping("/{id}/dashboard")
+    public ResponseEntity<StationDashboardResponse> getDashboard(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(service.getDashboard(id));
     }
 
     // ESP32
