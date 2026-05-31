@@ -97,10 +97,9 @@ public class AuditLogService {
     }
 
     private AuditLogResponse convertToResponse(AuditLog log) {
-
         return AuditLogResponse.builder()
                 .id(log.getId())
-                .user(log.getUser())
+                .userId(log.getUser().getId())
                 .action(log.getAction())
                 .description(log.getDescription())
                 .createdAt(log.getCreatedAt())
