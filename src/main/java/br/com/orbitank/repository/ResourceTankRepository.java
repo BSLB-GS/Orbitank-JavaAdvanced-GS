@@ -14,4 +14,6 @@ public interface ResourceTankRepository extends JpaRepository<ResourceTank, Long
     Double sumVolumeByStationAndType(@Param("stationId") Long stationId, @Param("type") ResourceType type);
 
     boolean existsByLunarStationIdAndStatusIn(Long stationId, List<TankStatus> statuses);
+
+    List<ResourceTank> findByLunarStationIdAndResourceType(Long stationId, ResourceType type);
 }

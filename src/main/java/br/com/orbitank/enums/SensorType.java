@@ -4,5 +4,7 @@ public enum SensorType {
     TEMPERATURE,
     PRESSURE,
     TANK_LEVEL,
-    FLOW_RATE
+    FLOW_RATE,
+    HUMIDITY,
+    ENERGY
 }
