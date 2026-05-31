@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Response;
 
-import br.com.orbitank.entity.SpaceMission;
 import br.com.orbitank.enums.SupplyRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SupplyRequestResponse {
     private Long id;
-    private SpaceMission mission;
+    private Long missionId;
     private Double requestedWaterVolume;
     private Double requestedH2Volume;
     private Double requestedO2Volume;

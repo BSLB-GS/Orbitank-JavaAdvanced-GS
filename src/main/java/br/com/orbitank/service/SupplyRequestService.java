@@ -37,11 +37,15 @@ public class SupplyRequestService {
     }
 
     public SupplyRequestResponse create(SupplyRequestRequest requestDto) {
+        validateRequestedVolumes(requestDto);
+
         SupplyRequest request = toEntity(requestDto);
         return toResponse(repository.save(request));
     }
 
     public SupplyRequestResponse update(Long id, SupplyRequestRequest requestDto) {
+        validateRequestedVolumes(requestDto);
+
         SupplyRequest request = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Solicitação não encontrada com o ID: " + id));
@@ -78,10 +82,19 @@ public class SupplyRequestService {
         return toResponse(requestSalvo);
     }
 
+    private void validateRequestedVolumes(SupplyRequestRequest request) {
+        if (request.getRequestedWaterVolume() <= 0 &&
+                request.getRequestedH2Volume() <= 0 &&
+                request.getRequestedO2Volume() <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Pelo menos um dos volumes solicitados (Água, H2 ou O2) deve ser maior que zero.");
+        }
+    }
+
     private SupplyRequestResponse toResponse(SupplyRequest entity) {
         return SupplyRequestResponse.builder()
                 .id(entity.getId())
-                .mission(entity.getMission())
+                .missionId(entity.getMission().getId())
                 .requestedWaterVolume(entity.getRequestedWaterVolume())
                 .requestedH2Volume(entity.getRequestedH2Volume())
                 .requestedO2Volume(entity.getRequestedO2Volume())
