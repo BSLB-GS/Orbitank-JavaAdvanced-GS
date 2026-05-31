@@ -54,8 +54,9 @@ public class SupplyRequestController {
 
     @PostMapping("/{id}/analyze")
     public ResponseEntity<SupplyRequestResponse> analyzeRequest(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestParam Long stationId
     ) {
-        return ResponseEntity.ok(service.analyzeRequest(id));
+        return ResponseEntity.ok(service.analyzeRequest(id, stationId));
     }
 }
