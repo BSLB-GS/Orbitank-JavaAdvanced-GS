@@ -96,4 +96,11 @@ public class ResourceTankService {
                 .status(request.getStatus())
                 .build();
     }
+
+    public List<ResourceTankResponse> findByStationId(Long stationId) {
+        return repository.findByLunarStationId(stationId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 }

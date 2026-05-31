@@ -1,17 +1,15 @@
 package br.com.orbitank.controller;
 
 import br.com.orbitank.dto.Request.LunarStationRequest;
-import br.com.orbitank.dto.Response.LunarStationResponse;
-import br.com.orbitank.dto.Response.StationDashboardResponse;
-import br.com.orbitank.dto.Response.LatestSensorReadingResponse;
+import br.com.orbitank.dto.Response.*;
 import br.com.orbitank.service.LunarStationService;
+import br.com.orbitank.service.ResourceTankService;
 import br.com.orbitank.service.SensorReadingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import br.com.orbitank.service.OperationalAlertService;
-import br.com.orbitank.dto.Response.OperationalAlertResponse;
 
 import java.util.List;
 
@@ -23,6 +21,7 @@ public class LunarStationController {
     private final LunarStationService service;
     private final SensorReadingService sensorReadingService;
     private final OperationalAlertService operationalAlertService;
+    private final ResourceTankService resourceTankService;
 
     @GetMapping
     public ResponseEntity<List<LunarStationResponse>> findAll() {
@@ -93,5 +92,10 @@ public class LunarStationController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(operationalAlertService.findCriticalAlertsByStationId(id));
+    }
+
+    @GetMapping("/{id}/tanks")
+    public ResponseEntity<List<ResourceTankResponse>> getStationTanks(@PathVariable Long id) {
+        return ResponseEntity.ok(resourceTankService.findByStationId(id));
     }
 }

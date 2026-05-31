@@ -16,4 +16,6 @@ public interface ResourceTankRepository extends JpaRepository<ResourceTank, Long
     boolean existsByLunarStationIdAndStatusIn(Long stationId, List<TankStatus> statuses);
 
     List<ResourceTank> findByLunarStationIdAndResourceType(Long stationId, ResourceType type);
+
+    List<ResourceTank> findByLunarStationId(Long stationId);
 }
