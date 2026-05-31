@@ -92,4 +92,12 @@ public class SpaceMissionService {
                 .priority(request.getPriority())
                 .build();
     }
+
+    public List<SpaceMissionResponse> findAwaitingFuel() {
+        return repository.findByStatus(br.com.orbitank.enums.MissionStatus.AWAITING_FUEL)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
 }

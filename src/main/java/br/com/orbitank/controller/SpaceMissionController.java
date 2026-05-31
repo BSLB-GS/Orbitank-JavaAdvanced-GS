@@ -16,6 +16,7 @@ import java.util.List;
 public class SpaceMissionController {
 
     private final SpaceMissionService service;
+    private  final SpaceMissionService spaceMissionService;
 
     @GetMapping
     public ResponseEntity<List<SpaceMissionResponse>> findAll() {
@@ -50,5 +51,10 @@ public class SpaceMissionController {
     ) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/awaiting-fuel")
+    public ResponseEntity<List<SpaceMissionResponse>> getMissionsAwaitingFuel() {
+        return ResponseEntity.ok(spaceMissionService.findAwaitingFuel());
     }
 }
