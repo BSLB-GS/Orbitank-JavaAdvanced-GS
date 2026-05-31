@@ -2,14 +2,11 @@ package br.com.orbitank.controller;
 
 import br.com.orbitank.dto.Request.LunarStationRequest;
 import br.com.orbitank.dto.Response.*;
-import br.com.orbitank.service.LunarStationService;
-import br.com.orbitank.service.ResourceTankService;
-import br.com.orbitank.service.SensorReadingService;
+import br.com.orbitank.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import br.com.orbitank.service.OperationalAlertService;
 
 import java.util.List;
 
@@ -22,6 +19,7 @@ public class LunarStationController {
     private final SensorReadingService sensorReadingService;
     private final OperationalAlertService operationalAlertService;
     private final ResourceTankService resourceTankService;
+    private final MiningRobotService miningRobotService;
 
     @GetMapping
     public ResponseEntity<List<LunarStationResponse>> findAll() {
@@ -97,5 +95,10 @@ public class LunarStationController {
     @GetMapping("/{id}/tanks")
     public ResponseEntity<List<ResourceTankResponse>> getStationTanks(@PathVariable Long id) {
         return ResponseEntity.ok(resourceTankService.findByStationId(id));
+    }
+
+    @GetMapping("/{id}/robots")
+    public ResponseEntity<List<MiningRobotResponse>> getStationRobots(@PathVariable Long id) {
+        return ResponseEntity.ok(miningRobotService.findByStationId(id));
     }
 }
