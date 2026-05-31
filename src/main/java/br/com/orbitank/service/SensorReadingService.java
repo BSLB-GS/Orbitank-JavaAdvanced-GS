@@ -86,4 +86,21 @@ public class SensorReadingService {
                 .timestamp(request.getTimestamp())
                 .build();
     }
+
+    public List<br.com.orbitank.dto.Response.LatestSensorReadingResponse> getLatestReadingsByStation(Long stationId) {
+        List<SensorReading> latestReadings = repository.findLatestReadingsByStationId(stationId);
+
+        return latestReadings.stream().map(reading ->
+                br.com.orbitank.dto.Response.LatestSensorReadingResponse.builder()
+                        .sensorId(reading.getSensor().getId())
+                        .identifier(reading.getSensor().getIdentifier())
+                        .type(reading.getSensor().getSensorType())
+                        .location(reading.getSensor().getLocation())
+                        .readingValue(reading.getReadingValue())
+                        .status(reading.getSensor().getStatus())
+                        .lastReadingAt(reading.getTimestamp())
+                        .build()
+        ).toList();
+    }
 }
+

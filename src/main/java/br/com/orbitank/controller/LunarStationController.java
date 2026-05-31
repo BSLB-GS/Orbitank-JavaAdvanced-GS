@@ -3,7 +3,9 @@ package br.com.orbitank.controller;
 import br.com.orbitank.dto.Request.LunarStationRequest;
 import br.com.orbitank.dto.Response.LunarStationResponse;
 import br.com.orbitank.dto.Response.StationDashboardResponse;
+import br.com.orbitank.dto.Response.LatestSensorReadingResponse;
 import br.com.orbitank.service.LunarStationService;
+import br.com.orbitank.service.SensorReadingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 public class LunarStationController {
 
     private final LunarStationService service;
+    private final SensorReadingService sensorReadingService;
 
     @GetMapping
     public ResponseEntity<List<LunarStationResponse>> findAll() {
@@ -35,6 +38,13 @@ public class LunarStationController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.getDashboard(id));
+    }
+
+    @GetMapping("/{id}/sensors/latest-readings")
+    public ResponseEntity<List<LatestSensorReadingResponse>> getLatestSensorReadings(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(sensorReadingService.getLatestReadingsByStation(id));
     }
 
     // ESP32
