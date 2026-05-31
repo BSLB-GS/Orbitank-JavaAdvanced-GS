@@ -1,6 +1,5 @@
 package br.com.orbitank.dto.Response;
 
-import br.com.orbitank.entity.SupplyRequest;
 import br.com.orbitank.enums.RefuelOrderStatus;
 import br.com.orbitank.enums.TankStatus;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RefuelOrderResponse {
     private Long id;
-    private SupplyRequest supplyRequest;
+    private Long supplyRequestId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Double actualWaterTransferred;

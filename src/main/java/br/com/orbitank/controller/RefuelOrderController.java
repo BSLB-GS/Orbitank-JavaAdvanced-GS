@@ -36,6 +36,15 @@ public class RefuelOrderController {
         return ResponseEntity.ok(service.create(request));
     }
 
+    @PostMapping("/from-supply-request/{id}")
+    public ResponseEntity<RefuelOrderResponse> createFromSupplyRequest(
+            @PathVariable Long id,
+            @RequestParam Long stationId,
+            @RequestBody @Valid RefuelOrderRequest request
+    ) {
+        return ResponseEntity.ok(service.createFromSupplyRequest(id, stationId, request));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<RefuelOrderResponse> update(
             @PathVariable Long id,
