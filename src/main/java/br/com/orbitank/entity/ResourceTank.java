@@ -1,11 +1,9 @@
 package br.com.orbitank.entity;
 
 import br.com.orbitank.enums.ResourceType;
+import br.com.orbitank.enums.TankStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,31 +25,37 @@ public class ResourceTank {
     @JoinColumn(name = "station_id", nullable = false)
     private LunarStation lunarStation;
 
-    @NotNull
-    @Positive(message = "A capacidade máxima deve ser maior que zero")
-    @Column(nullable = false)
-    private Double maxCapacity;
-
-    @NotNull
-    @PositiveOrZero(message = "O volume não pode ser negativo")
-    @Column(nullable = false)
-    private Double currentVolume;
-
-    @NotNull
-    @PositiveOrZero(message = "A pressão não pode ser negativa")
-    @Column(nullable = false)
-    private Double currentPressure;
-
-    @NotNull
-    @DecimalMin(
-            value = "-273.15",
-            message = "A temperatura não pode ser inferior ao zero absoluto"
-    )
-    @Column(nullable = false)
-    private Double currentTemperature;
+    @NotBlank(message = "O identificador é obrigatório")
+    @Size(min = 3, max = 50)
+    @Column(nullable = false, unique = true)
+    private String identifier;
 
     @NotNull(message = "O tipo de recurso é obrigatório")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ResourceType resourceType;
+
+    @NotNull(message = "A capacidade máxima é obrigatória")
+    @Positive
+    @Column(nullable = false)
+    private Double maxCapacity;
+
+    @NotNull(message = "O volume atual é obrigatório")
+    @PositiveOrZero
+    @Column(nullable = false)
+    private Double currentVolume;
+
+    @NotNull(message = "A pressão atual é obrigatória")
+    @PositiveOrZero
+    @Column(nullable = false)
+    private Double currentPressure;
+
+    @NotNull(message = "A temperatura atual é obrigatória")
+    @Column(nullable = false)
+    private Double currentTemperature;
+
+    @NotNull(message = "O status do tanque é obrigatório")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TankStatus status;
 }

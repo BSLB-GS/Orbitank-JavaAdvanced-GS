@@ -1,10 +1,8 @@
 package br.com.orbitank.dto.Request;
 
 import br.com.orbitank.enums.ResourceType;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import br.com.orbitank.enums.TankStatus;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,22 +17,28 @@ public class ResourceTankRequest {
     @NotNull(message = "O ID da estação lunar é obrigatório")
     private Long lunarStationId;
 
-    @NotNull
-    @Positive(message = "A capacidade máxima deve ser maior que zero")
-    private Double maxCapacity;
-
-    @NotNull
-    @PositiveOrZero(message = "O volume não pode ser negativo")
-    private Double currentVolume;
-
-    @NotNull
-    @PositiveOrZero(message = "A pressão não pode ser negativa")
-    private Double currentPressure;
-
-    @NotNull
-    @DecimalMin(value = "-273.15", message = "A temperatura não pode ser inferior ao zero absoluto")
-    private Double currentTemperature;
+    @NotBlank(message = "O identificador é obrigatório")
+    @Size(min = 3, max = 50)
+    private String identifier;
 
     @NotNull(message = "O tipo de recurso é obrigatório")
     private ResourceType resourceType;
+
+    @NotNull(message = "A capacidade máxima é obrigatória")
+    @Positive
+    private Double maxCapacity;
+
+    @NotNull(message = "O volume atual é obrigatório")
+    @PositiveOrZero
+    private Double currentVolume;
+
+    @NotNull(message = "A pressão atual é obrigatória")
+    @PositiveOrZero
+    private Double currentPressure;
+
+    @NotNull(message = "A temperatura atual é obrigatória")
+    private Double currentTemperature;
+
+    @NotNull(message = "O status do tanque é obrigatório")
+    private TankStatus status;
 }
