@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.com.orbitank.service.OperationalAlertService;
+import br.com.orbitank.dto.Response.OperationalAlertResponse;
 
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class LunarStationController {
 
     private final LunarStationService service;
     private final SensorReadingService sensorReadingService;
+    private final OperationalAlertService operationalAlertService;
 
     @GetMapping
     public ResponseEntity<List<LunarStationResponse>> findAll() {
@@ -76,5 +79,19 @@ public class LunarStationController {
     ) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/alerts")
+    public ResponseEntity<List<OperationalAlertResponse>> getStationAlerts(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(operationalAlertService.findAlertsByStationId(id));
+    }
+
+    @GetMapping("/{id}/alerts/critical")
+    public ResponseEntity<List<OperationalAlertResponse>> getStationCriticalAlerts(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(operationalAlertService.findCriticalAlertsByStationId(id));
     }
 }

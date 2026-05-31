@@ -85,4 +85,19 @@ public class OperationalAlertService {
                 .severity(request.getSeverity())
                 .build();
     }
+
+    public List<OperationalAlertResponse> findAlertsByStationId(Long stationId) {
+        return repository.findByLunarStationId(stationId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<OperationalAlertResponse> findCriticalAlertsByStationId(Long stationId) {
+
+        return repository.findByLunarStationIdAndSeverity(stationId, br.com.orbitank.enums.AlertSeverity.CRITICAL)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 }
