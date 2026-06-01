@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: orbitank-api
+    runtime: java
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/*.jar
