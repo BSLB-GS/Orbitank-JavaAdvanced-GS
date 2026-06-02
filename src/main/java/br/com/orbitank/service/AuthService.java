@@ -14,20 +14,20 @@ public class AuthService {
 
     private final OperationalUserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public LoginResponse login(
-            LoginRequest request
-    ) {
+    public LoginResponse login(LoginRequest request) {
 
         OperationalUser user = repository
                 .findByEmail(request.getEmail())
-                .orElseThrow(() ->
-                        new RuntimeException("Usuário não encontrado")
-                );
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Senha inválida");
         }
+
+
+        String token = jwtService.generateToken(user);
 
         return LoginResponse.builder()
                 .userId(user.getId())
@@ -35,6 +35,7 @@ public class AuthService {
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .status(user.getStatus().name())
+                .token(token)
                 .build();
     }
 }
