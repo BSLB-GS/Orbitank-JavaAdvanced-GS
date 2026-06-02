@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.LoginResponse;
 import br.com.orbitank.entity.OperationalUser;
 import br.com.orbitank.repository.OperationalUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final OperationalUserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponse login(
             LoginRequest request
@@ -23,9 +25,7 @@ public class AuthService {
                         new RuntimeException("Usuário não encontrado")
                 );
 
-        if (!user.getPasswordHash()
-                .equals(request.getPassword())) {
-
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Senha inválida");
         }
 

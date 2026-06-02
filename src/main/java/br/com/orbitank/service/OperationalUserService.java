@@ -7,6 +7,7 @@ import br.com.orbitank.enums.UserStatus;
 import br.com.orbitank.repository.OperationalUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class OperationalUserService {
 
     private final OperationalUserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<OperationalUserResponse> findAll() {
         return repository.findAll()
@@ -50,7 +52,7 @@ public class OperationalUserService {
         OperationalUser user = OperationalUser.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
-                .passwordHash(request.getPassword())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .status(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
@@ -78,7 +80,7 @@ public class OperationalUserService {
         if (request.getPassword() != null &&
                 !request.getPassword().isBlank()) {
 
-            user.setPasswordHash(request.getPassword());
+            user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         }
 
         OperationalUser updatedUser = repository.save(user);
