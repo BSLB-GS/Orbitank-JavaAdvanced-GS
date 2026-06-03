@@ -1,9 +1,16 @@
 package br.com.orbitank.dto.Request;
 import lombok.Data;
 
-@Data
+
 public class ResetPasswordRequest {
-    private String email;
-    private String code;
+    private String resetToken;
     private String newPassword;
+    private String confirmPassword;
+
+    public String getResetToken() { return resetToken; }
+    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+    public String getNewPassword() { return newPassword; }
+    public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    public String getConfirmPassword() { return confirmPassword; }
+    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
 }

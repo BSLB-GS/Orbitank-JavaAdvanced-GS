@@ -57,7 +57,6 @@ public class AuthService {
     }
 
     public String verifyResetCode(String email, String code) {
-
         var user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -70,18 +69,27 @@ public class AuthService {
         }
 
         String resetToken = java.util.UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        repository.save(user);
 
         return resetToken;
     }
 
-    public void resetPassword(String email, String code, String newPassword) {
-        verifyResetCode(email, code);
+    public void resetPassword(String resetToken, String newPassword, String confirmPassword) {
 
-        OperationalUser user = repository.findByEmail(email).get();
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("As senhas não coincidem.");
+        }
+
+
+        OperationalUser user = repository.findByResetToken(resetToken)
+                .orElseThrow(() -> new RuntimeException("Token inválido ou expirado."));
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
+
         user.setResetCode(null);
         user.setResetCodeExpiresAt(null);
+        user.setResetToken(null);
 
         repository.save(user);
     }

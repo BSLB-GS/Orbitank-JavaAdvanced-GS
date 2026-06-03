@@ -39,8 +39,12 @@ public class AuthController {
     }
 
     @PatchMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
-        service.resetPassword(request.getEmail(), request.getCode(), request.getNewPassword());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<java.util.Map<String, String>> resetPassword(@RequestBody ResetPasswordRequest request) {
+
+        service.resetPassword(request.getResetToken(), request.getNewPassword(), request.getConfirmPassword());
+
+        return ResponseEntity.ok(
+                java.util.Map.of("message", "Senha redefinida com sucesso.")
+        );
     }
 }

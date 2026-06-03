@@ -97,5 +97,8 @@ public class OperationalUser implements UserDetails {
     @Column(length = 6)
     private String resetCode;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
     private LocalDateTime resetCodeExpiresAt;
 }
