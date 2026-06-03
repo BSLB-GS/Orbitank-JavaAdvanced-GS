@@ -11,6 +11,4 @@ public interface OperationalUserRepository
     Optional<OperationalUser> findByEmail(String email);
 
     boolean existsByEmail(String email);
-
-    Optional<OperationalUser> findByResetToken(String resetToken);
 }

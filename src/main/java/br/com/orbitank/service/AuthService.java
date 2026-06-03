@@ -3,6 +3,7 @@ package br.com.orbitank.service;
 import br.com.orbitank.dto.Request.LoginRequest;
 import br.com.orbitank.dto.Response.LoginResponse;
 import br.com.orbitank.entity.OperationalUser;
+import br.com.orbitank.entity.PasswordResetToken;
 import br.com.orbitank.repository.OperationalUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -10,7 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
@@ -22,8 +22,9 @@ public class AuthService {
     private final JwtService jwtService;
     private final JavaMailSender mailSender;
 
-    public LoginResponse login(LoginRequest request) {
+    private final PasswordResetService passwordResetService;
 
+    public LoginResponse login(LoginRequest request) {
         OperationalUser user = repository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -46,51 +47,32 @@ public class AuthService {
 
     public void forgotPassword(String email) {
         repository.findByEmail(email).ifPresent(user -> {
+
             String code = String.format("%06d", new Random().nextInt(999999));
 
-            user.setResetCode(code);
-            user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-            repository.save(user);
+            passwordResetService.createResetCode(user, code);
 
             sendEmail(user.getEmail(), code);
         });
     }
 
     public String verifyResetCode(String email, String code) {
-        var user = repository.findByEmail(email)
+        OperationalUser user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (user.getResetCode() == null || !user.getResetCode().equals(code)) {
-            throw new RuntimeException("Código de verificação inválido.");
-        }
-
-        if (user.getResetCodeExpiresAt().isBefore(java.time.LocalDateTime.now())) {
-            throw new RuntimeException("Código de verificação expirado.");
-        }
-
-        String resetToken = java.util.UUID.randomUUID().toString();
-        user.setResetToken(resetToken);
-        repository.save(user);
-
-        return resetToken;
+        return passwordResetService.verifyCodeAndGenerateToken(user, code);
     }
 
     public void resetPassword(String resetToken, String newPassword, String confirmPassword) {
-
         if (!newPassword.equals(confirmPassword)) {
             throw new RuntimeException("As senhas não coincidem.");
         }
 
+        PasswordResetToken validToken = passwordResetService.validateAndConsumeToken(resetToken);
 
-        OperationalUser user = repository.findByResetToken(resetToken)
-                .orElseThrow(() -> new RuntimeException("Token inválido ou expirado."));
+        OperationalUser user = validToken.getOperationalUser();
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
-
-        user.setResetCode(null);
-        user.setResetCodeExpiresAt(null);
-        user.setResetToken(null);
-
         repository.save(user);
     }
 
@@ -98,7 +80,7 @@ public class AuthService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Orbitank - Recuperação de Senha");
-        message.setText("Seu código de recuperação é: " + code + "\n\nEle expira em 15 minutos.");
+        message.setText("Seu código de recuperação é: " + code + "\n\nEle expira em 10 minutos.");
         mailSender.send(message);
     }
 }
