@@ -59,8 +59,6 @@ public class OperationalUser implements UserDetails {
 
     private LocalDateTime lastLoginAt;
 
-    // --- MÉTODOS DO USERDETAILS ---
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -95,4 +93,9 @@ public class OperationalUser implements UserDetails {
     public boolean isEnabled() {
         return status == UserStatus.ACTIVE;
     }
+
+    @Column(length = 6)
+    private String resetCode;
+
+    private LocalDateTime resetCodeExpiresAt;
 }
