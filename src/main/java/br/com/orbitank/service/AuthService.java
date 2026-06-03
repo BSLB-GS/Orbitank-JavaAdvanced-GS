@@ -20,7 +20,7 @@ public class AuthService {
     private final OperationalUserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
 
     private final PasswordResetService passwordResetService;
 
@@ -52,7 +52,7 @@ public class AuthService {
 
             passwordResetService.createResetCode(user, code);
 
-            sendEmail(user.getEmail(), code);
+            emailService.sendVerificationCode(user.getEmail(), code);
         });
     }
 
@@ -74,13 +74,5 @@ public class AuthService {
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         repository.save(user);
-    }
-
-    private void sendEmail(String to, String code) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Orbitank - Recuperação de Senha");
-        message.setText("Seu código de recuperação é: " + code + "\n\nEle expira em 10 minutos.");
-        mailSender.send(message);
     }
 }
