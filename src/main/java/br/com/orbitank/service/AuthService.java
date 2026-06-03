@@ -45,16 +45,15 @@ public class AuthService {
     }
 
     public void forgotPassword(String email) {
-        OperationalUser user = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        repository.findByEmail(email).ifPresent(user -> {
+            String code = String.format("%06d", new Random().nextInt(999999));
 
-        String code = String.format("%06d", new Random().nextInt(999999));
+            user.setResetCode(code);
+            user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+            repository.save(user);
 
-        user.setResetCode(code);
-        user.setResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-        repository.save(user);
-
-        sendEmail(user.getEmail(), code);
+            sendEmail(user.getEmail(), code);
+        });
     }
 
     public void verifyResetCode(String email, String code) {

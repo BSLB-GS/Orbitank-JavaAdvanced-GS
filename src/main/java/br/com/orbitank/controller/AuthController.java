@@ -23,9 +23,11 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<java.util.Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         service.forgotPassword(request.getEmail());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                java.util.Map.of("message", "Se o e-mail estiver cadastrado, um código de verificação será enviado.")
+        );
     }
 
     @PostMapping("/verify-reset-code")
