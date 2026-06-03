@@ -31,9 +31,11 @@ public class AuthController {
     }
 
     @PostMapping("/verify-reset-code")
-    public ResponseEntity<Void> verifyResetCode(@RequestBody VerifyCodeRequest request) {
-        service.verifyResetCode(request.getEmail(), request.getCode());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<java.util.Map<String, String>> verifyResetCode(@RequestBody VerifyCodeRequest request) {
+        String token = service.verifyResetCode(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(
+                java.util.Map.of("resetToken", token)
+        );
     }
 
     @PatchMapping("/reset-password")

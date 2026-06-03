@@ -56,17 +56,22 @@ public class AuthService {
         });
     }
 
-    public void verifyResetCode(String email, String code) {
-        OperationalUser user = repository.findByEmail(email)
+    public String verifyResetCode(String email, String code) {
+
+        var user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         if (user.getResetCode() == null || !user.getResetCode().equals(code)) {
-            throw new RuntimeException("Código inválido");
+            throw new RuntimeException("Código de verificação inválido.");
         }
 
-        if (user.getResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Código expirado");
+        if (user.getResetCodeExpiresAt().isBefore(java.time.LocalDateTime.now())) {
+            throw new RuntimeException("Código de verificação expirado.");
         }
+
+        String resetToken = java.util.UUID.randomUUID().toString();
+
+        return resetToken;
     }
 
     public void resetPassword(String email, String code, String newPassword) {
