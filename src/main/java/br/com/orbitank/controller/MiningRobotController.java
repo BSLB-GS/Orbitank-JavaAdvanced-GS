@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.MiningRobotResponse;
 import br.com.orbitank.service.MiningRobotService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,9 @@ public class MiningRobotController {
     public ResponseEntity<MiningRobotResponse> create(
             @RequestBody @Valid MiningRobotRequest request
     ) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED) // Status 201
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")

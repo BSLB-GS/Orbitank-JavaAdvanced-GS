@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.*;
 import br.com.orbitank.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +48,6 @@ public class LunarStationController {
         return ResponseEntity.ok(sensorReadingService.getLatestReadingsByStation(id));
     }
 
-    // ESP32
     @GetMapping("/code/{stationCode}")
     public ResponseEntity<LunarStationResponse> findByStationCode(
             @PathVariable Long stationCode
@@ -59,7 +59,9 @@ public class LunarStationController {
     public ResponseEntity<LunarStationResponse> create(
             @RequestBody @Valid LunarStationRequest request
     ) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED) // Status 201
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")

@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.RefuelOrderResponse;
 import br.com.orbitank.service.RefuelOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +31,10 @@ public class RefuelOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<RefuelOrderResponse> create(
-            @RequestBody @Valid RefuelOrderRequest request
-    ) {
-        return ResponseEntity.ok(service.create(request));
+    public ResponseEntity<RefuelOrderResponse> create(@RequestBody @Valid RefuelOrderRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.create(request));
     }
 
     @PostMapping("/from-supply-request/{id}")
@@ -42,7 +43,9 @@ public class RefuelOrderController {
             @RequestParam Long stationId,
             @RequestBody @Valid RefuelOrderRequest request
     ) {
-        return ResponseEntity.ok(service.createFromSupplyRequest(id, stationId, request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.createFromSupplyRequest(id, stationId, request));
     }
 
     @PutMapping("/{id}")

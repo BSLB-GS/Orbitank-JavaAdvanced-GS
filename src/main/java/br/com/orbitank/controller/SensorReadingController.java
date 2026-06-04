@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.SensorReadingResponse;
 import br.com.orbitank.service.SensorReadingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,9 @@ public class SensorReadingController {
     public ResponseEntity<SensorReadingResponse> create(
             @RequestBody @Valid SensorReadingRequest request
     ) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")

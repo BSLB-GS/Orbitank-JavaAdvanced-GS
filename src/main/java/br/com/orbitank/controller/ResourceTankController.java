@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.ResourceTankResponse;
 import br.com.orbitank.service.ResourceTankService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,9 @@ public class ResourceTankController {
     public ResponseEntity<ResourceTankResponse> create(
             @RequestBody @Valid ResourceTankRequest request
     ) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")

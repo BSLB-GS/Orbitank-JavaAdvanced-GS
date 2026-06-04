@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.OperationalAlertResponse;
 import br.com.orbitank.service.OperationalAlertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,9 @@ public class OperationalAlertController {
     public ResponseEntity<OperationalAlertResponse> create(
             @RequestBody @Valid OperationalAlertRequest request
     ) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED) // Status 201
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")

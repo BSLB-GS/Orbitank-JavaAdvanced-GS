@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.SpaceMissionResponse;
 import br.com.orbitank.service.SpaceMissionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,6 @@ import java.util.List;
 public class SpaceMissionController {
 
     private final SpaceMissionService service;
-    private  final SpaceMissionService spaceMissionService;
 
     @GetMapping
     public ResponseEntity<List<SpaceMissionResponse>> findAll() {
@@ -34,7 +34,9 @@ public class SpaceMissionController {
     public ResponseEntity<SpaceMissionResponse> create(
             @RequestBody @Valid SpaceMissionRequest request
     ) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")
@@ -55,6 +57,6 @@ public class SpaceMissionController {
 
     @GetMapping("/awaiting-fuel")
     public ResponseEntity<List<SpaceMissionResponse>> getMissionsAwaitingFuel() {
-        return ResponseEntity.ok(spaceMissionService.findAwaitingFuel());
+        return ResponseEntity.ok(service.findAwaitingFuel());
     }
 }

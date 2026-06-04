@@ -5,6 +5,7 @@ import br.com.orbitank.dto.Response.AuditLogResponse;
 import br.com.orbitank.service.AuditLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus; // Import necessário
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,17 +24,15 @@ public class AuditLogController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuditLogResponse> findById(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<AuditLogResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<AuditLogResponse> create(
-            @RequestBody @Valid AuditLogRequest request
-    ) {
-        return ResponseEntity.ok(service.create(request));
+    public ResponseEntity<AuditLogResponse> create(@RequestBody @Valid AuditLogRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.create(request));
     }
 
     @PutMapping("/{id}")
@@ -45,9 +44,7 @@ public class AuditLogController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
