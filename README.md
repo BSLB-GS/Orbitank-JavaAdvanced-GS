@@ -2,20 +2,41 @@
 ...
 
 ---
-🚀 Swagger UI & Consoles
+# 🔗 Links do projeto
 
 Acesse a documentação interativa e realize testes diretamente pelo navegador:
 
+Render
 ```bash
 http://localhost:8080/swagger-ui/index.html#
 ```
+Swagger
+```bash
+http://localhost:8080/swagger-ui/index.html#
+```
+Documentação
 ```bash
 http://localhost:8080/api-docs
 ```
+Youtube
 ```bash
 http://localhost:8080/h2-console
 ```
+
 ---
+# 🛠️ Tecnologias Utilizadas
+* **Java 21**
+* **Spring Boot 3.x**
+* **Spring Security & JWT** (Autenticação e Autorização)
+* **Spring Data JPA & Hibernate** (Persistência e Modelagem Avançada)
+* **Spring HATEOAS** (Navegabilidade de API)
+* **Spring WebSockets** (Comunicação em Tempo Real)
+* **Spring Mail** (Recuperação de Senha)
+* **Banco de Dados:** Oracle DB (Produção) / H2 Database (Testes locais)
+* **Java Records** (Estruturação imutável de DTOs)
+* **Swagger/OpenAPI** (Documentação)
+---
+
 # Cronograma (ARRUMAR)
 
 | Atividade | Responsável | Data | Status |
@@ -89,3 +110,4 @@ http://localhost:8080/h2-console
 </table>
 
 ---
+
