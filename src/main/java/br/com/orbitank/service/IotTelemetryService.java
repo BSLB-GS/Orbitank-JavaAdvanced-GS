@@ -1,6 +1,7 @@
 package br.com.orbitank.service;
 
 import br.com.orbitank.dto.Request.IotTelemetryRequest;
+import br.com.orbitank.dto.Response.TelemetryRealtimeResponse;
 import br.com.orbitank.entity.*;
 import br.com.orbitank.enums.*;
 import br.com.orbitank.repository.*;
@@ -27,8 +28,6 @@ public class IotTelemetryService {
     private final OperationalAlertRepository alertRepository;
     private final AuditLogRepository auditLogRepository;
     private final OperationalUserRepository userRepository;
-
-    // Integrado para o Requisito 9 (Tempo Real)
     private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
@@ -90,10 +89,26 @@ public class IotTelemetryService {
             registerAuditLog(station, auditDescription.toString());
         }
 
-        // --- DISPARO PARA O PAINEL EM TEMPO REAL ---
+        TelemetryRealtimeResponse response = TelemetryRealtimeResponse.builder()
+                .stationCode(request.getStationCode())
+                .iceLevelPercent(request.getIceLevelPercent())
+                .waterLevelPercent(request.getWaterLevelPercent())
+                .hydrogenLevelPercent(request.getHydrogenLevelPercent())
+                .oxygenLevelPercent(request.getOxygenLevelPercent())
+                .energyLevelPercent(request.getEnergyLevelPercent())
+                .temperatureCelsius(request.getTemperatureCelsius())
+                .humidityPercent(request.getHumidityPercent())
+                .moduleStatus(request.getModuleStatus())
+                .riskLevel("LOW")
+                .alertActive(Boolean.TRUE.equals(request.getAlertActive()))
+                .alertType(Boolean.TRUE.equals(request.getAlertActive()) ? "WARNING" : "NONE")
+                .alertMessage(request.getAlertMessage())
+                .alertSeverity(request.getAlertSeverity())
+                .build();
+
         String destination = "/topic/stations/" + request.getStationCode() + "/telemetry";
-        messagingTemplate.convertAndSend(destination, request);
-        // -------------------------------------------
+        messagingTemplate.convertAndSend(destination, response);
+        // ----------------------------------------------
 
         log.info("✅ Processamento da Estação {} concluído com sucesso!", station.getStationCode());
     }
