@@ -39,4 +39,7 @@ public class LunarStation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StationStatus status;
+
+    @Embedded
+    private AuditInfo auditInfo;
 }
