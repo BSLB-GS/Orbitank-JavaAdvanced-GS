@@ -1,11 +1,6 @@
 package br.com.orbitank.dto.Request;
 
-import lombok.Data;
-
-@Data
-public class LoginRequest {
-
-    private String email;
-
-    private String password;
-}
+public record LoginRequest(
+        String email,
+        String password
+) {}

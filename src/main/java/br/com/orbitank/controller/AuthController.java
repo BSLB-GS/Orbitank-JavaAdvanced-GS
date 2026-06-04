@@ -24,7 +24,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<java.util.Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        service.forgotPassword(request.getEmail());
+        service.forgotPassword(request.email());
         return ResponseEntity.ok(
                 java.util.Map.of("message", "Se o e-mail estiver cadastrado, um código de verificação será enviado.")
         );
@@ -41,7 +41,7 @@ public class AuthController {
     @PatchMapping("/reset-password")
     public ResponseEntity<java.util.Map<String, String>> resetPassword(@RequestBody ResetPasswordRequest request) {
 
-        service.resetPassword(request.getResetToken(), request.getNewPassword(), request.getConfirmPassword());
+        service.resetPassword(request.resetToken(), request.newPassword(), request.confirmPassword());
 
         return ResponseEntity.ok(
                 java.util.Map.of("message", "Senha redefinida com sucesso.")

@@ -1,7 +1,5 @@
 package br.com.orbitank.dto.Request;
-import lombok.Data;
 
-@Data
-public class ForgotPasswordRequest {
-    private String email;
-}
+public record ForgotPasswordRequest(
+        String email
+) {}

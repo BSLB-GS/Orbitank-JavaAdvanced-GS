@@ -26,10 +26,10 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         OperationalUser user = repository
-                .findByEmail(request.getEmail())
+                .findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new RuntimeException("Senha inválida");
         }
 

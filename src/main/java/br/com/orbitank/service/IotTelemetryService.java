@@ -32,52 +32,52 @@ public class IotTelemetryService {
 
     @Transactional
     public void processTelemetry(IotTelemetryRequest request) {
-        log.info("📡 Iniciando processamento de telemetria da Estação Código: {}", request.getStationCode());
+        log.info("📡 Iniciando processamento de telemetria da Estação Código: {}", request.stationCode());
 
-        LunarStation station = lunarStationRepository.findByStationCode(request.getStationCode())
-                .orElseThrow(() -> new RuntimeException("Estação não encontrada com o código: " + request.getStationCode()));
+        LunarStation station = lunarStationRepository.findByStationCode(request.stationCode())
+                .orElseThrow(() -> new RuntimeException("Estação não encontrada com o código: " + request.stationCode()));
 
         boolean importantEventTriggered = false;
         StringBuilder auditDescription = new StringBuilder("Telemetria recebida. ");
 
-        if (Boolean.TRUE.equals(request.getEmergencyMode())) {
+        if (Boolean.TRUE.equals(request.emergencyMode())) {
             station.setStatus(StationStatus.EMERGENCY_MODE);
             importantEventTriggered = true;
             auditDescription.append("ESTADO DE EMERGÊNCIA ATIVADO. ");
         } else {
             try {
-                if (request.getModuleStatus() != null) {
-                    station.setStatus(StationStatus.valueOf(request.getModuleStatus()));
+                if (request.moduleStatus() != null) {
+                    station.setStatus(StationStatus.valueOf(request.moduleStatus()));
                 }
             } catch (IllegalArgumentException e) {
-                log.warn("Status de módulo desconhecido recebido: {}", request.getModuleStatus());
+                log.warn("Status de módulo desconhecido recebido: {}", request.moduleStatus());
             }
         }
         lunarStationRepository.save(station);
 
-        updateTanks(station.getId(), ResourceType.LUNAR_ICE, request.getIceLevelPercent());
-        updateTanks(station.getId(), ResourceType.LIQUID_WATER, request.getWaterLevelPercent());
-        updateTanks(station.getId(), ResourceType.HYDROGEN, request.getHydrogenLevelPercent());
-        updateTanks(station.getId(), ResourceType.OXYGEN, request.getOxygenLevelPercent());
+        updateTanks(station.getId(), ResourceType.LUNAR_ICE, request.iceLevelPercent());
+        updateTanks(station.getId(), ResourceType.LIQUID_WATER, request.waterLevelPercent());
+        updateTanks(station.getId(), ResourceType.HYDROGEN, request.hydrogenLevelPercent());
+        updateTanks(station.getId(), ResourceType.OXYGEN, request.oxygenLevelPercent());
 
         LocalDateTime readingTime = LocalDateTime.now();
-        if (request.getTimestamp() != null) {
-            readingTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(request.getTimestamp()), ZoneId.systemDefault());
+        if (request.timestamp() != null) {
+            readingTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(request.timestamp()), ZoneId.systemDefault());
         }
 
-        saveSensorReading(station.getId(), SensorType.ENERGY, request.getEnergyLevelPercent(), readingTime);
-        saveSensorReading(station.getId(), SensorType.TEMPERATURE, request.getTemperatureCelsius(), readingTime);
-        saveSensorReading(station.getId(), SensorType.HUMIDITY, request.getHumidityPercent(), readingTime);
-        saveSensorReading(station.getId(), SensorType.TANK_LEVEL, request.getWaterLevelPercent(), readingTime);
+        saveSensorReading(station.getId(), SensorType.ENERGY, request.energyLevelPercent(), readingTime);
+        saveSensorReading(station.getId(), SensorType.TEMPERATURE, request.temperatureCelsius(), readingTime);
+        saveSensorReading(station.getId(), SensorType.HUMIDITY, request.humidityPercent(), readingTime);
+        saveSensorReading(station.getId(), SensorType.TANK_LEVEL, request.waterLevelPercent(), readingTime);
 
-        if (Boolean.TRUE.equals(request.getAlertActive())) {
+        if (Boolean.TRUE.equals(request.alertActive())) {
             OperationalAlert alert = OperationalAlert.builder()
                     .lunarStation(station)
-                    .source("Módulo IoT ESP32 (Disp: " + request.getDeviceId() + ")")
-                    .message(request.getAlertMessage() != null && !request.getAlertMessage().isEmpty() ? request.getAlertMessage() : "Alerta acionado via telemetria")
+                    .source("Módulo IoT ESP32 (Disp: " + request.deviceId() + ")")
+                    .message(request.alertMessage()!= null && !request.alertMessage().isEmpty() ? request.alertMessage(): "Alerta acionado via telemetria")
                     .active(true)
                     .triggeredAt(readingTime)
-                    .severity(AlertSeverity.valueOf(request.getAlertSeverity() != null ? request.getAlertSeverity() : "WARNING"))
+                    .severity(AlertSeverity.valueOf(request.alertSeverity() != null ? request.alertSeverity(): "WARNING"))
                     .build();
             alertRepository.save(alert);
 
@@ -90,23 +90,23 @@ public class IotTelemetryService {
         }
 
         TelemetryRealtimeResponse response = TelemetryRealtimeResponse.builder()
-                .stationCode(request.getStationCode())
-                .iceLevelPercent(request.getIceLevelPercent())
-                .waterLevelPercent(request.getWaterLevelPercent())
-                .hydrogenLevelPercent(request.getHydrogenLevelPercent())
-                .oxygenLevelPercent(request.getOxygenLevelPercent())
-                .energyLevelPercent(request.getEnergyLevelPercent())
-                .temperatureCelsius(request.getTemperatureCelsius())
-                .humidityPercent(request.getHumidityPercent())
-                .moduleStatus(request.getModuleStatus())
+                .stationCode(request.stationCode())
+                .iceLevelPercent(request.iceLevelPercent())
+                .waterLevelPercent(request.waterLevelPercent())
+                .hydrogenLevelPercent(request.hydrogenLevelPercent())
+                .oxygenLevelPercent(request.oxygenLevelPercent())
+                .energyLevelPercent(request.energyLevelPercent())
+                .temperatureCelsius(request.temperatureCelsius())
+                .humidityPercent(request.humidityPercent())
+                .moduleStatus(request.moduleStatus())
                 .riskLevel("LOW")
-                .alertActive(Boolean.TRUE.equals(request.getAlertActive()))
-                .alertType(Boolean.TRUE.equals(request.getAlertActive()) ? "WARNING" : "NONE")
-                .alertMessage(request.getAlertMessage())
-                .alertSeverity(request.getAlertSeverity())
+                .alertActive(Boolean.TRUE.equals(request.alertActive()))
+                .alertType(Boolean.TRUE.equals(request.alertActive()) ? "WARNING" : "NONE")
+                .alertMessage(request.alertMessage())
+                .alertSeverity(request.alertSeverity())
                 .build();
 
-        String destination = "/topic/stations/" + request.getStationCode() + "/telemetry";
+        String destination = "/topic/stations/" + request.stationCode() + "/telemetry";
         messagingTemplate.convertAndSend(destination, response);
         // ----------------------------------------------
 
