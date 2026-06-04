@@ -23,7 +23,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.count() == 0) {
+        if (userRepository.findByEmail("admin@orbitank.com").isEmpty()) {
             OperationalUser admin = OperationalUser.builder()
                     .fullName("Administrador Global")
                     .email("admin@orbitank.com")
