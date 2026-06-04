@@ -41,6 +41,62 @@ http://localhost:8080/h2-console
 * **Swagger/OpenAPI** (Documentação)
 ---
 
+## 🧠 Modelagem Avançada Utilizada
+
+Neste projeto, aplicamos conceitos avançados de persistência com **JPA/Hibernate** para garantir uma arquitetura robusta e escalável, destacando-se:
+
+* **`@Embedded` e `@Embeddable`:** Utilizados para agrupar atributos relacionados em classes de valor (Value Objects), melhorando a coesão do modelo de domínio (ex: métricas de telemetria agrupadas).
+* **`@IdClass` / Chaves Compostas:** Implementação de identificadores compostos onde regras de negócio exigem unicidade baseada em mais de um atributo.
+* **DTOs com Java Records:** Substituição de classes tradicionais por `records` do Java para garantir imutabilidade e tráfego de dados mais leve e seguro na camada de visualização.
+
+---
+
+## 🧪 Guias de Teste e Validação
+
+### 1. Como testar Login e JWT
+1. Realize uma requisição **POST** para `/auth/login` enviando `email` e `password` no corpo (JSON).
+2. A API retornará um token JWT na resposta.
+3. Copie este token e, nas requisições seguintes, adicione-o no Header (Cabeçalho) da requisição da seguinte forma:
+   * **Key:** `Authorization`
+   * **Value:** `Bearer SEU_TOKEN_AQUI`
+
+### 2. Como testar a Recuperação de Senha
+1. Realize um **POST** em `/auth/forgot-password` com o seu e-mail.
+2. Verifique a caixa de entrada do e-mail informado (um código de validação real será enviado via SMTP).
+3. Faça um **POST** em `/auth/verify-reset-code` informando o e-mail e o código recebido.
+4. Finalize com um **PATCH** em `/auth/reset-password`, enviando o e-mail, o código validado e a nova senha desejada.
+
+### 3. Como testar WebSockets (Tempo Real)
+1. Utilize um cliente WebSocket (como Postman v10+ ou Insomnia).
+2. Conecte-se à URL da aplicação via protocolo WS: `ws://URL_DO_RENDER/ws` (ou `ws://localhost:8080/ws` localmente).
+3. Inscreva-se no tópico correspondente (ex: `/topic/telemetry`) para começar a escutar as atualizações em tempo real disparadas pela API.
+
+### 4. Como testar a Rota de Telemetria IoT
+
+A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de hardwares (como o ESP32). Para simular via Swagger ou Postman:
+1. Faça um **POST** na rota `/iot/telemetry`.
+2. Envie o seguinte JSON simulando um pacote de dados de hardware:
+\`\`\`json
+{
+  "deviceId": "ESP32-STATION-01",
+  "stationCode": 1001,
+  "timestamp": "2026-06-04T12:00:00Z",
+  "metrics": {
+    "oxygenLevelPercent": 82.5,
+    "temperatureCelsius": -40.2
+  },
+  "alertActive": false
+}
+\`\`\`
+3. Verifique o retorno `201 Created` e observe se a conexão WebSocket (se estiver ativa) recebeu o broadcast dessa leitura.
+
+---
+
+## 🎬 Apresentação do Projeto
+
+* **Vídeo Pitch (Apresentação Comercial):** [Clique aqui para assistir no YouTube](https://youtube.com/...)
+* **Vídeo Demonstração (API/Software em funcionamento):** [Clique aqui para assistir no YouTube](https://youtube.com/...)
+
 ## Cronograma (ARRUMAR)
 
 # 📅 Cronograma de Desenvolvimento
