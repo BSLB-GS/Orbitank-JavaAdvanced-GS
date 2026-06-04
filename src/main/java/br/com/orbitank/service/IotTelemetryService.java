@@ -6,6 +6,7 @@ import br.com.orbitank.enums.*;
 import br.com.orbitank.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,9 @@ public class IotTelemetryService {
     private final AuditLogRepository auditLogRepository;
     private final OperationalUserRepository userRepository;
 
+    // Integrado para o Requisito 9 (Tempo Real)
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Transactional
     public void processTelemetry(IotTelemetryRequest request) {
         log.info("📡 Iniciando processamento de telemetria da Estação Código: {}", request.getStationCode());
@@ -36,7 +40,6 @@ public class IotTelemetryService {
 
         boolean importantEventTriggered = false;
         StringBuilder auditDescription = new StringBuilder("Telemetria recebida. ");
-
 
         if (Boolean.TRUE.equals(request.getEmergencyMode())) {
             station.setStatus(StationStatus.EMERGENCY_MODE);
@@ -53,7 +56,6 @@ public class IotTelemetryService {
         }
         lunarStationRepository.save(station);
 
-
         updateTanks(station.getId(), ResourceType.LUNAR_ICE, request.getIceLevelPercent());
         updateTanks(station.getId(), ResourceType.LIQUID_WATER, request.getWaterLevelPercent());
         updateTanks(station.getId(), ResourceType.HYDROGEN, request.getHydrogenLevelPercent());
@@ -67,7 +69,7 @@ public class IotTelemetryService {
         saveSensorReading(station.getId(), SensorType.ENERGY, request.getEnergyLevelPercent(), readingTime);
         saveSensorReading(station.getId(), SensorType.TEMPERATURE, request.getTemperatureCelsius(), readingTime);
         saveSensorReading(station.getId(), SensorType.HUMIDITY, request.getHumidityPercent(), readingTime);
-        saveSensorReading(station.getId(), SensorType.TANK_LEVEL, request.getWaterLevelPercent(), readingTime); // Exemplo unificado
+        saveSensorReading(station.getId(), SensorType.TANK_LEVEL, request.getWaterLevelPercent(), readingTime);
 
         if (Boolean.TRUE.equals(request.getAlertActive())) {
             OperationalAlert alert = OperationalAlert.builder()
@@ -88,12 +90,16 @@ public class IotTelemetryService {
             registerAuditLog(station, auditDescription.toString());
         }
 
+        // --- DISPARO PARA O PAINEL EM TEMPO REAL ---
+        String destination = "/topic/stations/" + request.getStationCode() + "/telemetry";
+        messagingTemplate.convertAndSend(destination, request);
+        // -------------------------------------------
+
         log.info("✅ Processamento da Estação {} concluído com sucesso!", station.getStationCode());
     }
 
     private void updateTanks(Long stationId, ResourceType type, Double percent) {
         if (percent == null) return;
-
         List<ResourceTank> tanks = tankRepository.findByLunarStationIdAndResourceType(stationId, type);
         for (ResourceTank tank : tanks) {
             double newVolume = tank.getMaxCapacity() * (percent / 100.0);
@@ -104,7 +110,6 @@ public class IotTelemetryService {
 
     private void saveSensorReading(Long stationId, SensorType type, Double value, LocalDateTime timestamp) {
         if (value == null) return;
-
         sensorRepository.findAll().stream()
                 .filter(s -> s.getLunarStation().getId().equals(stationId) && s.getSensorType() == type)
                 .findFirst()

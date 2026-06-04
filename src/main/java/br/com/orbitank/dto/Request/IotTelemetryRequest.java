@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IotTelemetryRequest {
-    private Long deviceId;
+    private String deviceId;
     private Long stationCode;
     private Long timestamp;
     private Double iceLevelPercent;
