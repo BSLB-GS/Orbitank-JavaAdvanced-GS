@@ -28,6 +28,7 @@ public class OperationalUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @NotBlank(message = "O nome do usuário é obrigatório")
     @Size(min = 3, max = 100)
     @Column(nullable = false, length = 100)
