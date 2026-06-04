@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
@@ -28,10 +30,15 @@ public class LunarStationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LunarStationResponse> findById(
-            @PathVariable Long id
-    ) {
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<LunarStationResponse> findById(@PathVariable Long id) {
+        LunarStationResponse response = service.findById(id);
+
+        response.add(linkTo(methodOn(LunarStationController.class).findById(id)).withSelfRel());
+        response.add(linkTo(methodOn(LunarStationController.class).getDashboard(id)).withRel("dashboard"));
+        response.add(linkTo(methodOn(LunarStationController.class).getStationTanks(id)).withRel("tanks"));
+        response.add(linkTo(methodOn(LunarStationController.class).getStationAlerts(id)).withRel("alerts"));
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}/dashboard")

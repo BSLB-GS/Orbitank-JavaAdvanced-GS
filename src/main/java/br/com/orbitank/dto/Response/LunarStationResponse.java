@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LunarStationResponse {
+public class LunarStationResponse extends RepresentationModel<LunarStationResponse> {
     private Long id;
     private Long stationCode;
     private String name;
