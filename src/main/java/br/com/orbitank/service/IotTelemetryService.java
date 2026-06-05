@@ -114,9 +114,13 @@ public class IotTelemetryService {
                 .moduleStatus(request.moduleStatus())
                 .riskLevel("LOW")
                 .alertActive(Boolean.TRUE.equals(request.alertActive()))
-                .alertType(Boolean.TRUE.equals(request.alertActive()) ? "WARNING" : "NONE")
+                .alertType(Boolean.TRUE.equals(request.alertActive())
+                        ? (request.alertType()!=null?request.alertType() :"ALERT")
+                        :"NONE")
                 .alertMessage(request.alertMessage())
-                .alertSeverity(request.alertSeverity())
+                .alertSeverity(Boolean.TRUE.equals(request.alertActive())
+                        ? (request.alertSeverity()!=null?request.alertSeverity() :"LOW")
+                        :"NONE")
                 .build();
 
         String destination = "/topic/stations/" + request.stationCode() + "/telemetry";
