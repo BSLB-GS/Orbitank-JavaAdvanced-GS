@@ -34,7 +34,7 @@ public class LunarStationService {
         return toResponse(entity);
     }
 
-    public LunarStationResponse findByStationCode(Long stationCode) {
+    public LunarStationResponse findByStationCode(String stationCode) {
         LunarStation entity = repository.findByStationCode(stationCode)
                 .orElseThrow(() -> new RuntimeException("Estação não encontrada com o código: " + stationCode));
         return toResponse(entity);

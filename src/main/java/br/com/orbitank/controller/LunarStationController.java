@@ -57,7 +57,7 @@ public class LunarStationController {
 
     @GetMapping("/code/{stationCode}")
     public ResponseEntity<LunarStationResponse> findByStationCode(
-            @PathVariable Long stationCode
+            @PathVariable String stationCode
     ) {
         return ResponseEntity.ok(service.findByStationCode(stationCode));
     }

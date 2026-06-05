@@ -24,7 +24,7 @@ public class LunarStation {
 
     @NotNull(message = "O código numérico da estação é obrigatório")
     @Column(nullable = false, unique = true)
-    private Long stationCode;
+    private String stationCode;
 
     @NotBlank(message = "O nome da estação é obrigatório")
     @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")

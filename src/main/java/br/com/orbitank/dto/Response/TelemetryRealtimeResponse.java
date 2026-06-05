@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record TelemetryRealtimeResponse(
-        Long stationCode,
+        String stationCode,
         Double iceLevelPercent,
         Double waterLevelPercent,
         Double hydrogenLevelPercent,

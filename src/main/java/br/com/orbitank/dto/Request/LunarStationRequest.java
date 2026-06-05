@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class LunarStationRequest {
 
     @NotNull(message = "O código numérico da estação é obrigatório")
-    private Long stationCode;
+    private String stationCode;
 
     @NotBlank(message = "O nome da estação é obrigatório")
     @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")

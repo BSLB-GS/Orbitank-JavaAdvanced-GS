@@ -5,7 +5,7 @@ import lombok.Builder;
 @Builder
 public record IotTelemetryRequest(
         String deviceId,
-        Long stationCode,
+        String stationCode,
         Long timestamp,
         Double iceLevelPercent,
         Double waterLevelPercent,

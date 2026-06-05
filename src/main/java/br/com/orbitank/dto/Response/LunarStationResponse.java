@@ -13,7 +13,7 @@ import org.springframework.hateoas.RepresentationModel;
 @AllArgsConstructor
 public class LunarStationResponse extends RepresentationModel<LunarStationResponse> {
     private Long id;
-    private Long stationCode;
+    private String stationCode;
     private String name;
     private String location;
     private StationStatus status;
