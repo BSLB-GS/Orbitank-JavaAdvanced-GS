@@ -3,18 +3,14 @@ package br.com.orbitank.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.Setter;
 
-@Entity
-@Data
-@SuperBuilder
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Entity
 @DiscriminatorValue("SENSOR")
 public class SensorOperationalAlert extends OperationalAlert {
 
