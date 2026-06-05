@@ -71,14 +71,27 @@ public class IotTelemetryService {
         saveSensorReading(station.getId(), SensorType.TANK_LEVEL, request.waterLevelPercent(), readingTime);
 
         if (Boolean.TRUE.equals(request.alertActive())) {
+            AlertSeverity severity = AlertSeverity.LOW;
+
+            if (request.alertSeverity() != null && !request.alertSeverity().isBlank()) {
+                try {
+                    severity = AlertSeverity.valueOf(request.alertSeverity().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    log.warn("Severidade de alerta inválida recebida: {}", request.alertSeverity());
+                }
+            }
+
             OperationalAlert alert = OperationalAlert.builder()
                     .lunarStation(station)
                     .source("Módulo IoT ESP32 (Disp: " + request.deviceId() + ")")
-                    .message(request.alertMessage()!= null && !request.alertMessage().isEmpty() ? request.alertMessage(): "Alerta acionado via telemetria")
+                    .message(request.alertMessage() != null && !request.alertMessage().isEmpty()
+                            ? request.alertMessage()
+                            : "Alerta acionado via telemetria")
                     .active(true)
                     .triggeredAt(readingTime)
-                    .severity(AlertSeverity.valueOf(request.alertSeverity() != null ? request.alertSeverity(): "WARNING"))
+                    .severity(severity)
                     .build();
+
             alertRepository.save(alert);
 
             importantEventTriggered = true;
@@ -108,7 +121,7 @@ public class IotTelemetryService {
 
         String destination = "/topic/stations/" + request.stationCode() + "/telemetry";
         messagingTemplate.convertAndSend(destination, response);
-        // ----------------------------------------------
+
 
         log.info("✅ Processamento da Estação {} concluído com sucesso!", station.getStationCode());
     }
