@@ -13,12 +13,19 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Builder
-@Table(name = "tb_operational_alert")
+@Table(name="tb_operational_alert")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(
+        name="alert_category",
+        discriminatorType=DiscriminatorType.STRING,
+        length=30
+)
+@DiscriminatorValue("GENERAL")
 public class OperationalAlert {
 
     @Id
