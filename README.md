@@ -1,35 +1,75 @@
-# 🌕 Orbitank API
-...
+<p align="center">
+  <img width="270" height="270" alt="logo-orbitank-name" src="https://github.com/user-attachments/assets/8748afa8-70c3-426c-8b16-2521a2d385af" />
+</p>
+
+<h1 align="left">Orbitank</h1>
+<p>No Orbitank, a API em Java representa o módulo operacional e de telemetria da solução, gerenciando a comunicação direta com os sensores IoT (ESP32) para o monitoramento contínuo. 
+Ela é responsável por receber e processar as medições em tempo real dos níveis de recursos (hidrogênio, oxigênio e água) nos tanques, além de controlar a autenticação dos operadores 
+e garantir a segurança técnica e a precisão física das estações de abastecimento espacial.
+
+
+## 📖 Descrição da Solução
+O Orbitank é um sistema avançado de gestão e telemetria para Estações Lunares. A API fornece uma infraestrutura robusta para o monitoramento em tempo real de recursos vitais (como Oxigênio, Hidrogênio, Água e Energia), 
+gerenciamento de missões espaciais e controle de robôs e sensores IoT, além de garantir a comunicação instantânea de alertas críticos via WebSockets.
 
 ---
-## 📖 Descrição da Solução
-O **Orbitank** é um sistema avançado de gestão e telemetria para Estações Lunares. A API fornece uma infraestrutura robusta para o monitoramento em tempo real de recursos vitais (Oxigênio, Hidrogênio, Água, Energia), gerenciamento de missões espaciais, controle de robôs e sensores IoT, além de comunicação de alertas críticos via WebSockets.
+## 📑 Índice
 
+* [📖 Descrição da Solução](#-descrição-da-solução)
+* [🎥 Vídeo de demonstração da Solução](#-vídeo-de-demonstração-da-solução)
+* * [🎥 Vídeo pitch](#-vídeo-pitch)
+* [🔗 Links do projeto](#-links-do-projeto)
+* [🛠️ Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+* [🧠 Modelagem Avançada Utilizada](#-modelagem-avançada-utilizada)
+* [🧪 Guias de Teste e Validação](#-guias-de-teste-e-validação)
+* [📅 Cronograma de Desenvolvimento](#-cronograma-de-desenvolvimento)
+* [👥 Integrantes do Grupo](#-integrantes-do-grupo)
+* [🚀 Como Executar o Projeto Localmente](#-como-executar-o-projeto-localmente)
+* [⚙️ Variaveis de Ambiente](#️-variáveis-de-ambiente)
+* [📍 Endpoints da API (Orbitank)](#-endpoints-da-api-orbitank)
+    * [📦 Supply Requests (Pedidos de Suprimentos)](#-supply-requests-pedidos-de-suprimentos)
+    * [🌕 Lunar Stations (Estações Lunares)](#-lunar-stations-estações-lunares)
+    * [⚙️ Station Configurations (Configurações da Estação)](#️-station-configurations-configurações-da-estação)
+    * [🌡️ Sensors (Gestão de Sensores)](#️-sensors-gestão-de-sensores)
+    * [📊 Sensor Readings (Leituras de Sensores)](#-sensor-readings-leituras-de-sensores)
+    * [💧 Resource Tanks (Tanques de Recursos)](#-resource-tanks-tanques-de-recursos)
+    * [⛽ Refuel Orders (Ordens de Abastecimento)](#-refuel-orders-ordens-de-abastecimento)
+    * [🚨 Operational Alerts (Alertas Operacionais)](#-operational-alerts-alertas-operacionais)
+    * [🚀 Space Missions (Missões Espaciais)](#-space-missions-missões-espaciais)
+    * [🤖 Mining Robots (Robôs Mineradores)](#-mining-robots-robôs-mineradores)
+    * [🛡️ Audit Logs (Logs de Auditoria)](#️-audit-logs-logs-de-auditoria)
+    * [👥 Operational Users (Equipe Administrativa)](#-operational-users-equipe-administrativa)
+    * [📡 IoT Telemetry (Telemetria IoT)](#-iot-telemetry-telemetria-iot)
+    * [🔐 Auth (Autenticação)](#-auth-autenticação)
+
+---
+
+## 🎥 Vídeo de demonstração da Solução
+```bash
+http://localhost:8080/h2-console
+```
+---
+
+## 🎥 Vídeo de demonstração da Solução
+```bash
+http://localhost:8080/h2-console
+```
 ---
 ## 🔗 Links do projeto
-
-Acesse a documentação interativa e realize testes diretamente pelo navegador:
+Realize testes diretamente pelo navegador e local:
 
 Render
 ```bash
 https://orbitank-javaadvanced-gs.onrender.com/swagger-ui/index.html
 ```
-Swagger
+Local Swagger
 ```bash
 http://localhost:8080/swagger-ui/index.html#
 ```
-Documentação
-```bash
-http://localhost:8080/api-docs
-```
-Youtube
-```bash
-http://localhost:8080/h2-console
-```
-
 ---
 ## 🛠️ Tecnologias Utilizadas
-* **Java 21**
+
+* **Java 17**
 * **Spring Boot 3.x**
 * **Spring Security & JWT** (Autenticação e Autorização)
 * **Spring Data JPA & Hibernate** (Persistência e Modelagem Avançada)
@@ -67,16 +107,22 @@ Neste projeto, aplicamos conceitos avançados de persistência com **JPA/Hiberna
 4. Finalize com um **PATCH** em `/auth/reset-password`, enviando o e-mail, o código validado e a nova senha desejada.
 
 ### 3. Como testar WebSockets (Tempo Real)
-1. Utilize um cliente WebSocket (como Postman v10+ ou Insomnia).
-2. Conecte-se à URL da aplicação via protocolo WS: `ws://URL_DO_RENDER/ws` (ou `ws://localhost:8080/ws` localmente).
-3. Inscreva-se no tópico correspondente (ex: `/topic/telemetry`) para começar a escutar as atualizações em tempo real disparadas pela API.
+
+1. Recomendamos testar a conexão utilizando um cliente com suporte a STOMP (como a extensão de navegador [Apic](https://apic.app/)) ou via Front-end usando **SockJS + Stomp.js**.
+2. Para testar a conexão pura via **Postman (v10+)**, crie uma requisição do tipo *WebSocket Request* e conecte-se à URL:
+    * **Produção:** `wss://orbitank-javaadvanced-gs.onrender.com/ws/websocket`
+    * **Local:** `ws://localhost:8080/ws/websocket`
+      *(Nota: O sufixo `/websocket` é necessário em conexões brutas devido ao comportamento do SockJS).*
+3. Após o Handshake ser estabelecido, envie o frame de `CONNECT` e inscreva-se (*Subscribe*) no tópico da estação desejada:
+    * **Tópico de exemplo:** `/topic/stations/1/telemetry`
+4. Para validar, faça um POST de leitura na rota `/iot/telemetry` e observe o JSON sendo recebido instantaneamente pelo túnel do WebSocket.
 
 ### 4. Como testar a Rota de Telemetria IoT
 
 A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de hardwares (como o ESP32). Para simular via Swagger ou Postman:
 1. Faça um **POST** na rota `/iot/telemetry`.
 2. Envie o seguinte JSON simulando um pacote de dados de hardware:
-\`\`\`json
+```json
 {
   "deviceId": "ESP32-STATION-01",
   "stationCode": 1001,
@@ -87,18 +133,10 @@ A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de har
   },
   "alertActive": false
 }
-\`\`\`
+```
 3. Verifique o retorno `201 Created` e observe se a conexão WebSocket (se estiver ativa) recebeu o broadcast dessa leitura.
 
 ---
-
-## 🎬 Apresentação do Projeto
-
-* **Vídeo Pitch (Apresentação Comercial):** [Clique aqui para assistir no YouTube](https://youtube.com/...)
-* **Vídeo Demonstração (API/Software em funcionamento):** [Clique aqui para assistir no YouTube](https://youtube.com/...)
-
-## Cronograma (ARRUMAR)
-
 # 📅 Cronograma de Desenvolvimento
 
 | Atividade | Responsável | Data | Status |
@@ -127,9 +165,13 @@ A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de har
 | Refatorização: conversão de DTOs clássicos para Java Records | Manuelalacerda | 04/06 | Concluído |
 | Adição de ferramentas de otimização (spring-boot-devtools) | Manuelalacerda | 04/06 | Concluído |
 | Finalização e revisão completa da documentação da API (README) | Manuelalacerda | 04/06 | Concluído |
+| Modelagem avançada de alertas: Herança e @DiscriminatorColumn | Manuela Lacerda | 05/06 | Concluído |
+| Criação e refatoração das entidades SensorOperationalAlert e TankOperationalAlert | Manuela Lacerda | 05/06 | Concluído |
+| Tratamento de exceções e blindagem do parse de telemetria IoT | Manuela Lacerda | 05/06 | Concluído |
+| Refatoração final: melhoria no tratamento de erros do AuthService | Manuela Lacerda | 06/06 | Concluído |
+| Implementação de exceções HTTP específicas (ResponseStatusException) | Manuela Lacerda | 06/06 | Concluído |
 
 ---
-
 ## 👥 Integrantes do Grupo
 
 <table>
@@ -179,46 +221,39 @@ A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de har
 ## 🚀 Como Executar o Projeto Localmente
 
 1. **Clone o repositório:**
-   \`\`\`bash
-   git clone https://github.com/seu-usuario/orbitank-api.git
-   \`\`\`
+   ```bash
+   git clone https://github.com/BSLB-GS/Orbitank-JavaAdvanced-GS.git
+   ```
 2. **Navegue até a pasta do projeto:**
-   \`\`\`bash
+   ```bash
    cd orbitank-api
-   \`\`\`
-3. **Configure as variáveis de ambiente** mencionadas acima.
+   ```
+3. **Configure as variáveis de ambiente** mencionadas abaixo.
 4. **Compile e execute com o Maven:**
-   \`\`\`bash
+   ```bash
    ./mvnw spring-boot:run
-   \`\`\`
+   ```
 5. A API estará disponível em `http://localhost:8080`.
    
 ---
 
-## ⚙️ Variáveis de Ambiente
+## ⚙️ Variaveis de Ambiente
 
 Para rodar o projeto localmente, você precisará configurar as seguintes variáveis de ambiente no seu arquivo `application.properties` ou na sua IDE:
+```properties
+ORACLE_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+ORACLE_USER=seu_usuario
+ORACLE_PASSWORD=sua_senha
 
-\`\`\`properties
-### Conexão com o Banco de Dados (Oracle)
-SPRING_DATASOURCE_URL=jdbc:oracle:thin:@//host:porta/servico
-SPRING_DATASOURCE_USERNAME=seu_usuario
-SPRING_DATASOURCE_PASSWORD=sua_senha
-
-### Configurações JWT
-JWT_SECRET=sua_chave_secreta_super_segura
-JWT_EXPIRATION=86400000
-
-### Configurações de E-mail (Se aplicável)
-SPRING_MAIL_USERNAME=seu_email@gmail.com
-SPRING_MAIL_PASSWORD=sua_senha_de_app
-\`\`\`
-
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=seu_email@gmail.com
+MAIL_PASSWORD=sua_senha_de_app
+MAIL_FROM=seu_email@gmail.com
+```
 ---
-
-##📍 Endpoints da API (Orbitank)
+📍 Endpoints da API (Orbitank)
 ---
-
 ## 📦 Supply Requests (Pedidos de Suprimentos)
 Gerenciamento das solicitações de recursos (água, oxigênio, energia) feitas pelas estações.
 
@@ -513,16 +548,30 @@ Endpoint dedicado ao recebimento massivo de pacotes de dados em tempo real, envi
 ### Exemplo de Envio de Telemetria (POST `/iot/telemetry`)
 ```json
 {
-  "deviceId": "SENSOR-HUB-01",
-  "stationCode": 1001,
-  "timestamp": "2026-06-04T13:52:10Z",
-  "metrics": {
-    "oxygenLevelPercent": 85.5,
-    "waterLevelPercent": 90.0,
-    "energyLevelPercent": 75.2,
-    "temperatureCelsius": -45.0
-  },
-  "alertActive": false
+{
+  "deviceId":"ESP32-STATION-01",
+  "stationCode":"1",
+  "timestamp":1780498800,
+  "iceLevelPercent":80.0,
+  "waterLevelPercent":50.0,
+  "hydrogenLevelPercent":25.0,
+  "oxygenLevelPercent":90.0,
+  "energyLevelPercent":72.5,
+  "temperatureCelsius":25.3,
+  "humidityPercent":61.0,
+  "electrolysisActive":false,
+  "electrolysisBlocked":false,
+  "blockReason":"",
+  "hydrogenGeneratedPercent":25.0,
+  "oxygenGeneratedPercent":90.0,
+  "emergencyMode":false,
+  "moduleStatus":"ONLINE",
+  "riskLevel":"LOW",
+  "alertActive":false,
+  "alertType":"NONE",
+  "alertMessage":"",
+  "alertSeverity":"LOW"
+}
 }
 ```
 ---
