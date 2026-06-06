@@ -50,7 +50,7 @@ http://localhost:8080/h2-console
 ```
 ---
 
-## 🎥 Vídeo de demonstração da Solução
+## 🎥 Vídeo pitch
 ```bash
 http://localhost:8080/h2-console
 ```
