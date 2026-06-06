@@ -3,25 +3,22 @@ package br.com.orbitank.exception;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>>
-    handleValidationErrors(
-            MethodArgumentNotValidException ex
-    ) {
-
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult()
@@ -33,85 +30,32 @@ public class GlobalExceptionHandler {
                         )
                 );
 
-        Map<String, Object> response =
-                new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("errors", errors);
 
-        response.put(
-                "timestamp",
-                LocalDateTime.now()
-        );
-
-        response.put(
-                "status",
-                HttpStatus.BAD_REQUEST.value()
-        );
-
-        response.put(
-                "errors",
-                errors
-        );
-
-        return ResponseEntity
-                .badRequest()
-                .body(response);
+        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>>
-    handleConstraintViolation(
-            ConstraintViolationException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("message", ex.getMessage());
 
-        Map<String, Object> response =
-                new HashMap<>();
-
-        response.put(
-                "timestamp",
-                LocalDateTime.now()
-        );
-
-        response.put(
-                "status",
-                HttpStatus.BAD_REQUEST.value()
-        );
-
-        response.put(
-                "message",
-                ex.getMessage()
-        );
-
-        return ResponseEntity
-                .badRequest()
-                .body(response);
+        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>>
-    handleGenericException(
-            Exception ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.put("message", ex.getMessage());
 
-        Map<String, Object> response =
-                new HashMap<>();
-
-        response.put(
-                "timestamp",
-                LocalDateTime.now()
-        );
-
-        response.put(
-                "status",
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
-        );
-
-        response.put(
-                "message",
-                ex.getMessage()
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -127,6 +71,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         return buildResponse(HttpStatus.FORBIDDEN, "Acesso negado: você não tem permissão");
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
+        return buildResponse(
+                HttpStatus.valueOf(ex.getStatusCode().value()),
+                ex.getReason()
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage()
+        );
     }
 
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
