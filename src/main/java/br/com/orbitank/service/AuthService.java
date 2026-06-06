@@ -6,10 +6,9 @@ import br.com.orbitank.entity.OperationalUser;
 import br.com.orbitank.entity.PasswordResetToken;
 import br.com.orbitank.repository.OperationalUserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.Random;
 
@@ -25,12 +24,12 @@ public class AuthService {
     private final PasswordResetService passwordResetService;
 
     public LoginResponse login(LoginRequest request) {
-        OperationalUser user = repository
+        OperationalUser user=repository
                 .findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() ->new BadCredentialsException("Credenciais inválidas"));
 
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new RuntimeException("Senha inválida");
+        if (!passwordEncoder.matches(request.password(),user.getPasswordHash())) {
+            throw new BadCredentialsException("Credenciais inválidas");
         }
 
         String token = jwtService.generateToken(user);
