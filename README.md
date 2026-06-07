@@ -562,7 +562,6 @@ Endpoint dedicado ao recebimento massivo de pacotes de dados em tempo real, envi
 ### Exemplo de Envio de Telemetria (POST `/iot/telemetry`)
 ```json
 {
-{
   "deviceId":"ESP32-STATION-01",
   "stationCode":"1",
   "timestamp":1780498800,
@@ -586,7 +585,6 @@ Endpoint dedicado ao recebimento massivo de pacotes de dados em tempo real, envi
   "alertMessage":"",
   "alertSeverity":"LOW"
 }
-}
 ```
 ---
 
@@ -604,7 +602,7 @@ Controle de acesso seguro, geração de tokens (JWT) e fluxos de recuperação d
 ```json
 {
   "email": "admin@orbitank.com",
-  "password": "SenhaSuperSegura123!"
+  "password": "Orbitank2026!"
 }
 ```
 ---
