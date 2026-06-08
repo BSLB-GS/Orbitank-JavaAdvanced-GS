@@ -50,7 +50,7 @@ http://localhost:8080/h2-console
 ```
 ---
 
-## 🎥 Vídeo de demonstração da Solução
+## 🎥 Vídeo pitch
 ```bash
 http://localhost:8080/h2-console
 ```
@@ -125,13 +125,27 @@ A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de har
 ```json
 {
   "deviceId": "ESP32-STATION-01",
-  "stationCode": 1001,
-  "timestamp": "2026-06-04T12:00:00Z",
-  "metrics": {
-    "oxygenLevelPercent": 82.5,
-    "temperatureCelsius": -40.2
-  },
-  "alertActive": false
+  "stationCode": "1",
+  "timestamp": 1780498800,
+  "iceLevelPercent": 80.0,
+  "waterLevelPercent": 50.0,
+  "hydrogenLevelPercent": 25.0,
+  "oxygenLevelPercent": 90.0,
+  "energyLevelPercent": 72.5,
+  "temperatureCelsius": 25.3,
+  "humidityPercent": 61.0,
+  "electrolysisActive": false,
+  "electrolysisBlocked": false,
+  "blockReason": "",
+  "hydrogenGeneratedPercent": 25.0,
+  "oxygenGeneratedPercent": 90.0,
+  "emergencyMode": false,
+  "moduleStatus": "ONLINE",
+  "riskLevel": "LOW",
+  "alertActive": false,
+  "alertType": "NONE",
+  "alertMessage": "",
+  "alertSeverity": "LOW"
 }
 ```
 3. Verifique o retorno `201 Created` e observe se a conexão WebSocket (se estiver ativa) recebeu o broadcast dessa leitura.
@@ -226,7 +240,7 @@ A rota `/iot/telemetry` foi desenhada para receber disparos automatizados de har
    ```
 2. **Navegue até a pasta do projeto:**
    ```bash
-   cd orbitank-api
+   cd orbitank
    ```
 3. **Configure as variáveis de ambiente** mencionadas abaixo.
 4. **Compile e execute com o Maven:**
@@ -548,7 +562,6 @@ Endpoint dedicado ao recebimento massivo de pacotes de dados em tempo real, envi
 ### Exemplo de Envio de Telemetria (POST `/iot/telemetry`)
 ```json
 {
-{
   "deviceId":"ESP32-STATION-01",
   "stationCode":"1",
   "timestamp":1780498800,
@@ -572,7 +585,6 @@ Endpoint dedicado ao recebimento massivo de pacotes de dados em tempo real, envi
   "alertMessage":"",
   "alertSeverity":"LOW"
 }
-}
 ```
 ---
 
@@ -590,7 +602,7 @@ Controle de acesso seguro, geração de tokens (JWT) e fluxos de recuperação d
 ```json
 {
   "email": "admin@orbitank.com",
-  "password": "SenhaSuperSegura123!"
+  "password": "Orbitank2026!"
 }
 ```
 ---
