@@ -46,7 +46,7 @@ gerenciamento de missões espaciais e controle de robôs e sensores IoT, além d
 
 ## 🎥 Vídeo de demonstração da Solução
 ```bash
-http://localhost:8080/h2-console
+https://youtu.be/xoHzPkp1Whk
 ```
 ---
 
