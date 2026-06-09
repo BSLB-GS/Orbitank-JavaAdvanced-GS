@@ -46,7 +46,7 @@ gerenciamento de missões espaciais e controle de robôs e sensores IoT, além d
 
 ## 🎥 Vídeo de demonstração da Solução
 ```bash
-https://youtu.be/xoHzPkp1Whk
+https://youtu.be/uJaLty0rU8A?si=HD1UpG6lYRnTBdC1
 ```
 ---
 
@@ -58,7 +58,7 @@ http://localhost:8080/h2-console
 ## 🔗 Links do projeto
 Realize testes diretamente pelo navegador e local:
 
-Render
+Publico Render
 ```bash
 https://orbitank-javaadvanced-gs.onrender.com/swagger-ui/index.html
 ```
