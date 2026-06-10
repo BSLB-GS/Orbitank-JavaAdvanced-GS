@@ -52,7 +52,7 @@ https://youtu.be/uJaLty0rU8A?si=HD1UpG6lYRnTBdC1
 
 ## 🎥 Vídeo pitch
 ```bash
-http://localhost:8080/h2-console
+https://youtu.be/vpuYBuvfPYo?si=Yhi6FsootlY-S7ne
 ```
 ---
 ## 🔗 Links do projeto
